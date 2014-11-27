@@ -6,6 +6,9 @@
  *  Copyright 2008 MIT. All rights reserved.
  *
  */
+#ifndef MPLP_MPLP_ALG_H
+#define MPLP_MPLP_ALG_H
+
 using namespace std;
 #include <vector>
 #include <iostream>
@@ -140,3 +143,5 @@ private:
 	double LocalDecode(void);      //single node decoding
 	double UpdateResult(void);   //returns primal objective of this mplp instance
 };
+
+#endif

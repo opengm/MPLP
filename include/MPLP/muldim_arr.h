@@ -6,15 +6,15 @@
  *  Copyright 2008 MIT. All rights reserved.
  *
  */
+#ifndef MPLP_MULDIM_ARR_H
+#define MPLP_MULDIM_ARR_H
+
 using namespace std;
 #include <vector>
 #include <iostream>
 #include <string.h> 
 
 #include <MPLP/matrix.h>
-
-#ifndef _MULDIMARR
-#define _MULDIMARR
 
 
 #define huge 1e40

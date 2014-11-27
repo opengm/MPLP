@@ -1,5 +1,5 @@
-#ifndef READ_MODEL_FILE_H
-#define READ_MODEL_FILE_H
+#ifndef MPLP_READ_MODEL_FILE_H
+#define MPLP_READ_MODEL_FILE_H
 
 #include <iostream>
 #include <fstream>

@@ -5,8 +5,8 @@
  *  Copyright 2008 MIT, 2012 NYU. All rights reserved.
  *
  */
-#ifndef CYCLE_H
-#define CYCLE_H
+#ifndef MPLP_CYCLE_H
+#define MPLP_CYCLE_H
 
 #include <stdlib.h>
 #include <vector>
