@@ -15,6 +15,7 @@
 
 #include <MPLP/matrix.h>
 
+namespace mplpLib {
 
 #define huge 1e40
 #define BASE2DEC_PAIR(x1,x2,base1,base2) (x1*base2+x2)
@@ -142,5 +143,7 @@ inline void MulDimArr::BaseIncSpecial(std::vector<int> & inds) const{
         }
     }
 }
+
+} // namespace mplpLib
 
 #endif

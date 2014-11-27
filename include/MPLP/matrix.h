@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 
+namespace mplpLib {
+
 class Matrix;
 
 class Vec
@@ -140,5 +142,7 @@ void MakeCondDistX(Matrix & pygx, Vec & px);
 void VecMaxEnt( Matrix & f_val, Matrix & f_exp, Vec & p0, int ep, Matrix & lambdas, Vec & zs, bool brows, double maxentthr);
 double dot(double *a, double *b, int n);
 void ConjGradMaxEntVec( Matrix & f_val, Matrix & ref_p, Matrix & p_proj, int ep, Matrix & lambdas, Vec & zs, bool brow);
+
+} // namespace mplpLib
 
 #endif

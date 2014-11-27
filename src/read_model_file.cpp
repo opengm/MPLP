@@ -2,7 +2,7 @@
 
 #define DEBUG_MODE 0
 
-int read_model_file(std::vector<int> & var_sizes, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
+int mplpLib::read_model_file(std::vector<int> & var_sizes, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
     int i, j, v, nvars, nfactors, nevid, evid_size, curr_var, curr_val;
     double val;
     //	vector<int> factor_size, dim;
@@ -78,7 +78,7 @@ int read_model_file(std::vector<int> & var_sizes, std::vector< std::vector<int> 
 
 
 // TODO: I believe there is a bug here: when a factor has a single variable and it is observed as evidence, an empty factor is created
-int read_model_file(std::vector<int> & var_sizes, std::map<int, int> & evidence, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
+int mplpLib::read_model_file(std::vector<int> & var_sizes, std::map<int, int> & evidence, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
     int i, j, v, nvars, nfactors, nevid, evid_size, curr_var, curr_val;
     double val;
     std::vector< std::vector<int> > f;
@@ -177,7 +177,7 @@ int read_model_file(std::vector<int> & var_sizes, std::map<int, int> & evidence,
     return nevid;
 }
 
-int read_model_file2(std::vector<int> & var_sizes, std::map<int, int> & evidence, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
+int mplpLib::read_model_file2(std::vector<int> & var_sizes, std::map<int, int> & evidence, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
     int i, j, v, nvars, nfactors, nevid, evid_size, curr_var, curr_val;
     double val;
     std::vector< std::vector<int> > f;
@@ -285,7 +285,7 @@ int read_model_file2(std::vector<int> & var_sizes, std::map<int, int> & evidence
     return nevid;
 }
 
-void get_lambdas(int base, int fact, int ind, int p, const std::vector<int> & var_sizes, const std::map<int, int> & evidence, const std::vector<int> & curr_evid, const std::vector<int> & f, const std::vector<double> & l, std::vector<double> & lambdas){
+void mplpLib::get_lambdas(int base, int fact, int ind, int p, const std::vector<int> & var_sizes, const std::map<int, int> & evidence, const std::vector<int> & curr_evid, const std::vector<int> & f, const std::vector<double> & l, std::vector<double> & lambdas){
     while (ind < f.size()){
         int _fact = (ind == f.size() - 1 ? 0 : fact / var_sizes[f[ind + 1]]);
         if (p >= curr_evid.size() || f[ind] != curr_evid[p]){  //not in the evidence set

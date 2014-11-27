@@ -22,6 +22,7 @@
 #include <MPLP/cycle.h> // Most of the logic is in here.
 
 using namespace std;
+using namespace mplpLib;
 
 #define MAX_TIGHT_ITERS 1000000 // 100 used for testing
 

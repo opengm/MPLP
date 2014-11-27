@@ -18,6 +18,8 @@
 
 #include <MPLP/mplp_alg.h>
 
+namespace mplpLib {
+
 #define DEBUG_MODE 1
 
 #define Inf 9999999999.9
@@ -1653,5 +1655,7 @@ int TightenCycle(MPLPAlg & mplp, int nclus_to_add,  std::map<std::vector<int>, b
     delete_projection_graph(mplp.m_var_sizes.size(), projection_map, projection_imap_var, projection_adjacency_list, array_of_sij);
     return nClustersAdded;
 }
+
+} // namespace mplpLib
 
 #endif

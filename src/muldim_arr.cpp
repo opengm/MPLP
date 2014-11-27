@@ -21,7 +21,7 @@ void print_int_vec(vector<int> v){
 }
 
 
-MulDimArr::MulDimArr(vector<int> & base_sizes)
+mplpLib::MulDimArr::MulDimArr(vector<int> & base_sizes)
 {
     m_base_sizes = base_sizes;
     m_n_prodsize = 1;
@@ -36,7 +36,7 @@ MulDimArr::MulDimArr(vector<int> & base_sizes)
     m_ep = &m_dat[m_n_prodsize];	
 };
 
-MulDimArr::MulDimArr(const MulDimArr & v)
+mplpLib::MulDimArr::MulDimArr(const MulDimArr & v)
 {
     m_base_sizes = v.m_base_sizes;
     m_n_prodsize = v.m_n_prodsize;
@@ -45,7 +45,7 @@ MulDimArr::MulDimArr(const MulDimArr & v)
     memcpy(m_dat,v.m_dat,m_n_prodsize*sizeof(double));
 }
 
-void MulDimArr::print(void) const
+void mplpLib::MulDimArr::print(void) const
 {
     for (int i=0; i<m_n_prodsize; i++)
     {
@@ -55,7 +55,7 @@ void MulDimArr::print(void) const
 }
 
 // Print elements along with their indices
-void MulDimArr::print_with_inds(void) const
+void mplpLib::MulDimArr::print_with_inds(void) const
 {
     vector<int> inds_for_big;
     int i;
@@ -73,7 +73,7 @@ void MulDimArr::print_with_inds(void) const
     }
 }
 
-MulDimArr & MulDimArr::operator=(const MulDimArr & v)
+mplpLib::MulDimArr & mplpLib::MulDimArr::operator=(const MulDimArr & v)
 {
     m_base_sizes = v.m_base_sizes;
     m_n_prodsize = v.m_n_prodsize;
@@ -87,7 +87,7 @@ MulDimArr & MulDimArr::operator=(const MulDimArr & v)
 
 // Return the index in the flat multi-dimensional array corresponding to
 // the given multi-index
-inline int MulDimArr::GetFlatInd(vector<int> & base_inds) const{
+inline int mplpLib::MulDimArr::GetFlatInd(vector<int> & base_inds) const{
     int y=0;
     int fact = 1;
     int i;
@@ -101,7 +101,7 @@ inline int MulDimArr::GetFlatInd(vector<int> & base_inds) const{
 }
 
 //this is for decoding purposes
-void MulDimArr::GetInds(int ind, vector<int> & inds) const{
+void mplpLib::MulDimArr::GetInds(int ind, vector<int> & inds) const{
     int c, N = m_base_sizes.size();
     inds.reserve(N);
     while (N--) {
@@ -112,7 +112,7 @@ void MulDimArr::GetInds(int ind, vector<int> & inds) const{
 }
 
 
-inline int MulDimArr::GetFlatIndFromBig(vector<int> big_base_inds, vector<int> inds_in_big) const{
+inline int mplpLib::MulDimArr::GetFlatIndFromBig(vector<int> big_base_inds, vector<int> inds_in_big) const{
     int y=0;
     int fact = 1;
     int i;
@@ -127,13 +127,13 @@ inline int MulDimArr::GetFlatIndFromBig(vector<int> big_base_inds, vector<int> i
 
 
 
-double MulDimArr::GetVal(vector<int> & indices) const
+double mplpLib::MulDimArr::GetVal(vector<int> & indices) const
 {
     return m_dat[GetFlatInd(indices)];
 }
 
 
-inline void MulDimArr::BaseInc(vector<int> & inds) const{
+inline void mplpLib::MulDimArr::BaseInc(vector<int> & inds) const{
     int nx = m_base_sizes.size();
     int pos = nx-1;
     inds[pos]++;
@@ -152,7 +152,7 @@ inline void MulDimArr::BaseInc(vector<int> & inds) const{
  *   inds_in_big gives the indices of the small array variables in the big array
  *
  */
-void MulDimArr::ExpandAndAdd(MulDimArr & big_to_add_to, vector<int> & inds_of_small_in_big)
+void mplpLib::MulDimArr::ExpandAndAdd(MulDimArr & big_to_add_to, vector<int> & inds_of_small_in_big)
 {
     int vi;
     // TODO: Verify that var_sizes_big agrees with the var_sizes of the smaller (this) array
@@ -187,7 +187,7 @@ void MulDimArr::ExpandAndAdd(MulDimArr & big_to_add_to, vector<int> & inds_of_sm
  *   inds_in_big gives the indices of the small array variables in the big array
  *
  */
-void MulDimArr::ExpandAndSubtract(MulDimArr & big_to_sub_from, vector<int> & inds_of_small_in_big)
+void mplpLib::MulDimArr::ExpandAndSubtract(MulDimArr & big_to_sub_from, vector<int> & inds_of_small_in_big)
 {
     int vi;
     // TODO: Verify that var_sizes_big agrees with the var_sizes of the smaller (this) array
@@ -222,7 +222,7 @@ void MulDimArr::ExpandAndSubtract(MulDimArr & big_to_sub_from, vector<int> & ind
  *   inds_in_big gives the indices of the small array variables in the big array
  *
  */
-MulDimArr MulDimArr::Expand(vector<int> & var_sizes_big, vector<int> & inds_of_small_in_big)
+mplpLib::MulDimArr mplpLib::MulDimArr::Expand(vector<int> & var_sizes_big, vector<int> & inds_of_small_in_big)
 {
     int vi;
     // TODO: Verify that var_sizes_big agrees with the var_sizes of the smaller (this) array
@@ -251,7 +251,7 @@ MulDimArr MulDimArr::Expand(vector<int> & var_sizes_big, vector<int> & inds_of_s
 }	
 
 
-MulDimArr & MulDimArr::operator*=(double val)
+mplpLib::MulDimArr & mplpLib::MulDimArr::operator*=(double val)
         {
     double *p;
     for (p=m_dat; p<m_ep; p++)
@@ -259,7 +259,7 @@ MulDimArr & MulDimArr::operator*=(double val)
     return (*this);
         }
 
-MulDimArr & MulDimArr::operator=(double val)
+mplpLib::MulDimArr & mplpLib::MulDimArr::operator=(double val)
 {
     double *p;
     for (p=m_dat; p<m_ep; p++)
@@ -267,7 +267,7 @@ MulDimArr & MulDimArr::operator=(double val)
     return (*this);
 }
 
-MulDimArr & MulDimArr::operator+=(MulDimArr & v)
+mplpLib::MulDimArr & mplpLib::MulDimArr::operator+=(MulDimArr & v)
         {
     double *p,*pv;
     for (p=m_dat, pv=v.m_dat; p<m_ep; p++, pv++)
@@ -275,7 +275,7 @@ MulDimArr & MulDimArr::operator+=(MulDimArr & v)
     return (*this);
         }
 
-MulDimArr & MulDimArr::operator-=(MulDimArr & v)
+mplpLib::MulDimArr & mplpLib::MulDimArr::operator-=(MulDimArr & v)
         {
     double *p,*pv;
     for (p=m_dat, pv=v.m_dat; p<m_ep; p++, pv++)
@@ -283,7 +283,7 @@ MulDimArr & MulDimArr::operator-=(MulDimArr & v)
     return (*this);
         }
 
-double MulDimArr::Max(int &max_at) const
+double mplpLib::MulDimArr::Max(int &max_at) const
 {
     double m = m_dat[0];
     max_at = 0;
@@ -298,7 +298,7 @@ double MulDimArr::Max(int &max_at) const
 }
 
 
-double MulDimArr::Entropy() const
+double mplpLib::MulDimArr::Entropy() const
 {
     double sum = 0, e = 0, y;
     for (int i = 0; i < m_n_prodsize; ++i){
@@ -309,13 +309,13 @@ double MulDimArr::Entropy() const
 }
 
 
-double MulDimArr::Entropy_over_free_variables(const std::vector<int> & fixed_variables, const std::vector<int> & assignment) const{
+double mplpLib::MulDimArr::Entropy_over_free_variables(const std::vector<int> & fixed_variables, const std::vector<int> & assignment) const{
     double s = 0, e = 0;
     _Entropy_over_free_variables(m_base_sizes.size(), fixed_variables.size() - 1, 0, 1, fixed_variables, assignment, s, e);
     return e / s + log(s);
 }
 
-void MulDimArr::_Entropy_over_free_variables(int l, int p, int base, int fact, const std::vector<int> & fixed_variables, const std::vector<int> & assignment, double & sum, double & ent) const{
+void mplpLib::MulDimArr::_Entropy_over_free_variables(int l, int p, int base, int fact, const std::vector<int> & fixed_variables, const std::vector<int> & assignment, double & sum, double & ent) const{
     double y;
     while (l--){
         if (p < 0 || l != fixed_variables[p]){  //not a fixed variable
@@ -332,11 +332,11 @@ void MulDimArr::_Entropy_over_free_variables(int l, int p, int base, int fact, c
     ent -= y * m_dat[base];
 }
 
-double MulDimArr::max_over_free_variables(const vector<int> & fixed_variables, vector<int> & max_assignment) const{
+double mplpLib::MulDimArr::max_over_free_variables(const vector<int> & fixed_variables, vector<int> & max_assignment) const{
     return _max_over_free_variables(m_base_sizes.size(), fixed_variables.size() - 1, 0, 1, fixed_variables, max_assignment);
 }
 
-double MulDimArr::_max_over_free_variables(int l, int p, int base, int fact, const vector<int> & fixed_variables, vector<int> & max_assignment) const{
+double mplpLib::MulDimArr::_max_over_free_variables(int l, int p, int base, int fact, const vector<int> & fixed_variables, vector<int> & max_assignment) const{
     double max = -DBL_MAX, _max;     //sort(fixed_variables.begin(), fixed_variables.end());
     while (l--){
         if (p < 0 || l != fixed_variables[p]){  //not a fixed variable
@@ -357,7 +357,7 @@ double MulDimArr::_max_over_free_variables(int l, int p, int base, int fact, con
     return m_dat[base];   //all variables are fixed
 }
 
-double MulDimArr::gap_over_free_variables(const vector<int> & fixed_variables, vector<int> & max_assignment, double & m1, double & m2) const{
+double mplpLib::MulDimArr::gap_over_free_variables(const vector<int> & fixed_variables, vector<int> & max_assignment, double & m1, double & m2) const{
     int l = m_base_sizes.size(), p = fixed_variables.size() - 1, base = 0, fact = 1;
     double m;
     m1 = -huge, m2 = -huge;
@@ -386,7 +386,7 @@ double MulDimArr::gap_over_free_variables(const vector<int> & fixed_variables, v
 // For a given subset of variables, for any assignment to the subset maximize over
 // the value of all variables outside the subset
 // TODO: Do this for multiple subsets simultaneously. Should be much more efficient!!
-void MulDimArr::max_into_multiple_subsets_special(vector<vector<int> > & all_subset_inds, vector<MulDimArr> & all_max_res) const
+void mplpLib::MulDimArr::max_into_multiple_subsets_special(vector<vector<int> > & all_subset_inds, vector<MulDimArr> & all_max_res) const
 {
     // Prepare a MulDimArr into which we'll maximize
     // First set its size
@@ -432,14 +432,14 @@ void MulDimArr::max_into_multiple_subsets_special(vector<vector<int> > & all_sub
     delete [] b_need_max;
 }
 
-void MulDimArr::Write(ofstream & ofs)
+void mplpLib::MulDimArr::Write(ofstream & ofs)
 {
     for (int i=0; i<m_n_prodsize; i++)
         ofs << m_dat[i] << " ";
     ofs << endl;
 }
 
-void MulDimArr::Read(ifstream & ifs)
+void mplpLib::MulDimArr::Read(ifstream & ifs)
 {
     for (int i=0; i<m_n_prodsize; i++)
         ifs >> m_dat[i];

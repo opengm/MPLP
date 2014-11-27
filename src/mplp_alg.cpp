@@ -30,7 +30,7 @@ using namespace std;
 // Code to implement the Region object.
 /////////////////////////////////////////////////////////////////////////////////////
 
-Region::Region(vector<int> & region_inds, vector<vector<int> > & all_intersects, vector<int> & intersect_inds, vector<int> & var_sizes, int region_intersect): m_region_inds(region_inds), m_intersect_inds(intersect_inds), m_region_intersect(region_intersect)
+mplpLib::Region::Region(vector<int> & region_inds, vector<vector<int> > & all_intersects, vector<int> & intersect_inds, vector<int> & var_sizes, int region_intersect): m_region_inds(region_inds), m_intersect_inds(intersect_inds), m_region_intersect(region_intersect)
 {
     // Find the indices of each intersection within the region. Also intialize the message into that intersection
     for (int si=0; si<m_intersect_inds.size(); ++si){
@@ -71,7 +71,7 @@ Region::Region(vector<int> & region_inds, vector<vector<int> > & all_intersects,
     }
 }
 
-void Region::AddIntersectionSet(int intersect_loc, vector<vector<int> > & all_intersects, vector<int> & var_sizes){
+void mplpLib::Region::AddIntersectionSet(int intersect_loc, vector<vector<int> > & all_intersects, vector<int> & var_sizes){
     // Find the indices of intersection within the region. Also intialize the message into that intersection
     vector<int> tmp_inds_of_intersects;
     vector<int> curr_intersect = all_intersects[intersect_loc];
@@ -130,7 +130,7 @@ void Region::AddIntersectionSet(int intersect_loc, vector<vector<int> > & all_in
  * edge->edge messages. This difference is only relevant for
  * tightening (before tightening it is identical to MPLP).
  */
-void Region::UpdateMsgs(vector<MulDimArr> & sum_into_intersects)
+void mplpLib::Region::UpdateMsgs(vector<MulDimArr> & sum_into_intersects)
 {
     /* First do the expansion:
 	1. Take out the message into the intersection set from the current cluster
@@ -199,7 +199,7 @@ void Region::UpdateMsgs(vector<MulDimArr> & sum_into_intersects)
 // Code to read in factor graph and initialize MPLP.
 ////////////////////////////////////////////////////////////////////////////////
 
-MPLPAlg::MPLPAlg(clock_t start, int time_limit, const std::string model_file, const std::string evid_file, FILE *log_file, bool uaiCompetition) : start(start), time_limit(time_limit), begin(false), m_best_val(-huge), last_obj(huge), total_mplp_iterations(0), previous_run_of_global_decoding(-1), obj_del(huge), _log_file(log_file), m_uaiCompetition(uaiCompetition) {
+mplpLib::MPLPAlg::MPLPAlg(clock_t start, int time_limit, const std::string model_file, const std::string evid_file, FILE *log_file, bool uaiCompetition) : start(start), time_limit(time_limit), begin(false), m_best_val(-huge), last_obj(huge), total_mplp_iterations(0), previous_run_of_global_decoding(-1), obj_del(huge), _log_file(log_file), m_uaiCompetition(uaiCompetition) {
 
     size_t n;
     _res_fname = model_file.substr( (n = model_file.find_last_of('/')) == std::string::npos ? 0 : n + 1 ).append(".MPE");
@@ -222,7 +222,7 @@ MPLPAlg::MPLPAlg(clock_t start, int time_limit, const std::string model_file, co
     }
 }
 
-void MPLPAlg::Init(const std::string fn, const std::string evid_fn){
+void mplpLib::MPLPAlg::Init(const std::string fn, const std::string evid_fn){
     if(DEBUG_MODE)
         cout << "Calling Init() code...\n";
 
@@ -237,7 +237,7 @@ void MPLPAlg::Init(const std::string fn, const std::string evid_fn){
     Init(var_sizes, all_factors, all_lambdas);
 }
 
-void MPLPAlg::Init2(const std::string fn, const std::string evid_fn){
+void mplpLib::MPLPAlg::Init2(const std::string fn, const std::string evid_fn){
     if(DEBUG_MODE)
         cout << "Calling Init2() code...\n";
 
@@ -252,7 +252,7 @@ void MPLPAlg::Init2(const std::string fn, const std::string evid_fn){
 }
 
 
-void MPLPAlg::Init(vector<int> & var_sizes, vector<vector<int> > & all_region_inds, vector<vector<double> > & all_lambdas) {
+void mplpLib::MPLPAlg::Init(vector<int> & var_sizes, vector<vector<int> > & all_region_inds, vector<vector<double> > & all_lambdas) {
     // Set m_var_sizes
     m_var_sizes = var_sizes;   //invoking copy constructor
 
@@ -382,7 +382,7 @@ void MPLPAlg::Init(vector<int> & var_sizes, vector<vector<int> > & all_region_in
 // Main logic of MPLP (besides UpdateMsgs() which is in the Region class above)
 ////////////////////////////////////////////////////////////////////////////////
 
-void MPLPAlg::RunMPLP(int niter, double obj_del_thr, double int_gap_thr){
+void mplpLib::MPLPAlg::RunMPLP(int niter, double obj_del_thr, double int_gap_thr){
     int ri;
 
     // Perform the GMPLP updates (Sontag's modified version), not quite as in the GJ NIPS07 paper
@@ -425,7 +425,7 @@ void MPLPAlg::RunMPLP(int niter, double obj_del_thr, double int_gap_thr){
     return;
 }
 
-void MPLPAlg::AddAllEdgeIntersections()
+void mplpLib::MPLPAlg::AddAllEdgeIntersections()
 {
 
     if(DEBUG_MODE) cout << "Adding all edge intersection sets..." << endl;
@@ -464,7 +464,7 @@ void MPLPAlg::AddAllEdgeIntersections()
 /*
  * Assumes that no intersection set already exists for this region (creates a new one).
  */
-int MPLPAlg::AddRegion(vector<int> & inds_of_vars, vector<int> & intersect_inds)
+int mplpLib::MPLPAlg::AddRegion(vector<int> & inds_of_vars, vector<int> & intersect_inds)
 {
     // No potential to go along with the region
     int region_intersection_set = AddIntersectionSet(inds_of_vars);
@@ -477,7 +477,7 @@ int MPLPAlg::AddRegion(vector<int> & inds_of_vars, vector<int> & intersect_inds)
     return region_intersection_set;
 }
 
-int MPLPAlg::AddIntersectionSet(vector<int> & inds_of_vars)
+int mplpLib::MPLPAlg::AddIntersectionSet(vector<int> & inds_of_vars)
 {
     m_all_intersects.push_back(inds_of_vars);
     // Calculate the sizes of the variables in this set
@@ -508,7 +508,7 @@ int MPLPAlg::AddIntersectionSet(vector<int> & inds_of_vars)
 /*
  * Returns -1 if the intersection set not found.
  */
-int MPLPAlg::FindIntersectionSet(vector<int> & inds_of_vars)
+int mplpLib::MPLPAlg::FindIntersectionSet(vector<int> & inds_of_vars)
 {
     // Sort the indices to make lookup and comparison easy
     vector<int> tmp_inds_of_vars(inds_of_vars);
@@ -538,7 +538,7 @@ int MPLPAlg::FindIntersectionSet(vector<int> & inds_of_vars)
     return -1;
 }
 
-double MPLPAlg::IntVal(vector<int> & assignment) const{
+double mplpLib::MPLPAlg::IntVal(vector<int> & assignment) const{
     double int_val = 0;
     for (int ri=0; ri<m_all_regions.size(); ++ri){
         if (m_region_lambdas[ri].m_n_prodsize){
@@ -556,7 +556,7 @@ double MPLPAlg::IntVal(vector<int> & assignment) const{
     return int_val;
 }
 
-double MPLPAlg::LocalDecode(void){
+double mplpLib::MPLPAlg::LocalDecode(void){
     double obj=0;
     int max_at;
     for (int si=0; si<m_sum_into_intersects.size(); ++si){
@@ -577,7 +577,7 @@ double MPLPAlg::LocalDecode(void){
  * Checks to see if the current integer assignment is better than any found before, and
  * if so writes it to the output file.
  */
-double MPLPAlg::UpdateResult(void){
+double mplpLib::MPLPAlg::UpdateResult(void){
     double int_val;
     if ( (int_val = IntVal(m_decoded_res)) > m_best_val){
 
@@ -598,7 +598,7 @@ double MPLPAlg::UpdateResult(void){
  * TODO: Modify so that this writes a checkpoint, i.e. the full list of intersection sets, regions (not potentials),
  *       and messages, so we can use in debugging and re-running.
  */
-void MPLPAlg::Write(const char *res_fname, const char *msgs_fname, const char *suminto_fname, const char *objhist_fname, const char *inthist_fname, const char *timehist_fname)
+void mplpLib::MPLPAlg::Write(const char *res_fname, const char *msgs_fname, const char *suminto_fname, const char *objhist_fname, const char *inthist_fname, const char *timehist_fname)
 {
     stringstream s;
 
@@ -632,7 +632,7 @@ void MPLPAlg::Write(const char *res_fname, const char *msgs_fname, const char *s
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-void MPLPAlg::RunGlobalDecoding(bool exhaustive){
+void mplpLib::MPLPAlg::RunGlobalDecoding(bool exhaustive){
 
     if(DEBUG_MODE) {
         cout << "Running global decoding..." << endl;
@@ -753,7 +753,7 @@ void MPLPAlg::RunGlobalDecoding(bool exhaustive){
 
 //note: sorting gap values in ascending order and fixing the node with lowest gap value first (to resolve possible frustration)
 // TODO: put some randomness into this! Of all tied states, randomly sample. Or, randomly permute tied nodes, then choose 1. Or both.
-void MPLPAlg::RunGlobalDecoding2(bool exhaustive){
+void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
     if(DEBUG_MODE) {
         cout << "Running global decoding2..." << endl;
     }
@@ -878,7 +878,7 @@ void MPLPAlg::RunGlobalDecoding2(bool exhaustive){
 
 
 // Do large numbers of random objective permutations, run 10 iterations of MPLP, restore
-void MPLPAlg::RunGlobalDecoding3(void){
+void mplpLib::MPLPAlg::RunGlobalDecoding3(void){
 
     if(DEBUG_MODE) {
         cout << "Running global decoding3..." << endl;
@@ -940,7 +940,7 @@ void MPLPAlg::RunGlobalDecoding3(void){
 }
 
 
-bool MPLPAlg::RunDecimation(void){
+bool mplpLib::MPLPAlg::RunDecimation(void){
     bool fixed_node = false;
 
     int i, m;
@@ -991,7 +991,7 @@ bool MPLPAlg::RunDecimation(void){
     return fixed_node;
 }
 
-double MPLPAlg::gap(int n, int & max_at) const{
+double mplpLib::MPLPAlg::gap(int n, int & max_at) const{
     if (m_var_sizes[n] < 2){
         max_at = 0;
         return huge;

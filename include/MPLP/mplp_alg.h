@@ -19,6 +19,8 @@
 
 #include <MPLP/read_model_file.h>
 
+namespace mplpLib {
+
 #define MIN_APP_TIME .0001  //amount of time reserved for appending an answer into a file (to prevent any partially written answers)
 
 class Region
@@ -142,5 +144,7 @@ private:
     double LocalDecode(void);      //single node decoding
     double UpdateResult(void);   //returns primal objective of this mplp instance
 };
+
+} // namespace mplpLib
 
 #endif
