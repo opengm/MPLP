@@ -360,7 +360,7 @@ double mplpLib::MulDimArr::_max_over_free_variables(int l, int p, int base, int 
 double mplpLib::MulDimArr::gap_over_free_variables(const vector<int> & fixed_variables, vector<int> & max_assignment, double & m1, double & m2) const{
     int l = m_base_sizes.size(), p = fixed_variables.size() - 1, base = 0, fact = 1;
     double m;
-    m1 = -huge, m2 = -huge;
+    m1 = -MPLP_huge, m2 = -MPLP_huge;
     while (l--){
         if (p < 0 || l != fixed_variables[p]){  //not a fixed variable
             for (int i = 0; i < m_base_sizes[l]; ++i){

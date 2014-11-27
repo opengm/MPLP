@@ -1,6 +1,6 @@
 #include <MPLP/read_model_file.h>
 
-#define DEBUG_MODE 0
+#define MPLP_DEBUG_MODE 0
 
 int mplpLib::read_model_file(std::vector<int> & var_sizes, std::vector< std::vector<int> > & all_factors, std::vector< std::vector<double> > & all_lambdas, const std::string fn, const std::string evid_fn){
     int i, j, v, nvars, nfactors, nevid, evid_size, curr_var, curr_val;
@@ -20,25 +20,25 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::vector< std::vec
         std::cerr<<"Error: file is not in MARKOV format."<<std::endl;
     }
     fstr>>nvars;
-    if (DEBUG_MODE){ std::cout<<"nvars = "<<nvars<<std::endl; }
+    if (MPLP_DEBUG_MODE){ std::cout<<"nvars = "<<nvars<<std::endl; }
     for (i = 0; i < nvars; ++i){
         fstr>>v;
         var_sizes.push_back(v);
-        if (DEBUG_MODE){ std::cout<<"var_sizes["<<i<<"] = "<<var_sizes[i]<<std::endl; }
+        if (MPLP_DEBUG_MODE){ std::cout<<"var_sizes["<<i<<"] = "<<var_sizes[i]<<std::endl; }
     }
     fstr>>nfactors;
-    if (DEBUG_MODE){ std::cout<<"nfactors = "<<nfactors<<std::endl; }
+    if (MPLP_DEBUG_MODE){ std::cout<<"nfactors = "<<nfactors<<std::endl; }
     all_factors.reserve(nfactors);
     all_lambdas.reserve(nfactors);
     for (i = 0; i < nfactors; ++i){
         fstr>>nvars;
         all_factors.push_back(std::vector<int>());
         all_lambdas.push_back(std::vector<double>());
-        if (DEBUG_MODE){ std::cout<<"factor_size["<<i<<"] = "<<nvars<<std::endl; }
+        if (MPLP_DEBUG_MODE){ std::cout<<"factor_size["<<i<<"] = "<<nvars<<std::endl; }
         for (j = 0; j < nvars; ++j){
             fstr>>v;
             all_factors[i].push_back(v);
-            if (DEBUG_MODE){ std::cout<<"all_factors["<<i<<"]["<<j<<"] = "<<v<<std::endl; }
+            if (MPLP_DEBUG_MODE){ std::cout<<"all_factors["<<i<<"]["<<j<<"] = "<<v<<std::endl; }
         }
     }//"all_lambdas": the lambdas (messages) are just log(function table entry) 's
     for (i = 0; i < nfactors; ++i){
@@ -46,9 +46,9 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::vector< std::vec
         for (j = 0; j < nvars; ++j){
             fstr>>val;
             // We work in log space, so take the log of the factors' potentials
-            all_lambdas[i].push_back(val > 0 ? log(val) : -huge);
-            if (DEBUG_MODE){ std::cout<<"e^all_lambdas["<<i<<"]["<<j<<"] = "<<val<<std::endl; }
-            if (DEBUG_MODE){ std::cout<<"all_lambdas["<<i<<"]["<<j<<"] = "<<all_lambdas[i][j]<<std::endl; }
+            all_lambdas[i].push_back(val > 0 ? log(val) : -MPLP_huge);
+            if (MPLP_DEBUG_MODE){ std::cout<<"e^all_lambdas["<<i<<"]["<<j<<"] = "<<val<<std::endl; }
+            if (MPLP_DEBUG_MODE){ std::cout<<"all_lambdas["<<i<<"]["<<j<<"] = "<<all_lambdas[i][j]<<std::endl; }
         }
     }
     fstr.close();
@@ -64,10 +64,10 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::vector< std::vec
             while (evid_size--){
                 fstr>>curr_var;
                 fstr>>curr_val;
-                if (DEBUG_MODE){ std::cout<<"(1) evidence variable: observing var["<<curr_var<<"] == "<<curr_val<<";"<<std::endl; }
+                if (MPLP_DEBUG_MODE){ std::cout<<"(1) evidence variable: observing var["<<curr_var<<"] == "<<curr_val<<";"<<std::endl; }
                 // We will account for evidence by adding a new single node potential.
                 all_factors.push_back(std::vector<int>(1, curr_var));
-                std::vector<double> l_i = std::vector<double>(var_sizes[curr_var], -huge);
+                std::vector<double> l_i = std::vector<double>(var_sizes[curr_var], -MPLP_huge);
                 l_i[curr_val] = 0.0;
                 all_lambdas.push_back(l_i);
             }
@@ -96,7 +96,7 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::map<int, int> & 
                 while (evid_size--){
                     fstr>>curr_var;
                     fstr>>curr_val;
-                    if (DEBUG_MODE){ std::cout<<"(2) evidence variable: observing var["<<curr_var<<"] == "<<curr_val<<";"<<std::endl; }
+                    if (MPLP_DEBUG_MODE){ std::cout<<"(2) evidence variable: observing var["<<curr_var<<"] == "<<curr_val<<";"<<std::endl; }
                     evidence[curr_var] = curr_val;
                 }
             }
@@ -113,24 +113,24 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::map<int, int> & 
         std::cerr<<"Error: file is not in MARKOV format."<<std::endl;
     }
     fstr>>nvars;
-    if (DEBUG_MODE){ std::cout<<"nvars = "<<nvars<<std::endl; }
+    if (MPLP_DEBUG_MODE){ std::cout<<"nvars = "<<nvars<<std::endl; }
     for (i = 0; i < nvars; ++i){
         fstr>>v;
         var_sizes.push_back(v);
-        if (DEBUG_MODE){ std::cout<<"var_sizes["<<i<<"] = "<<var_sizes[i]<<std::endl; }
+        if (MPLP_DEBUG_MODE){ std::cout<<"var_sizes["<<i<<"] = "<<var_sizes[i]<<std::endl; }
     }
     fstr>>nfactors;
-    if (DEBUG_MODE){ std::cout<<"nfactors = "<<nfactors<<std::endl; }
+    if (MPLP_DEBUG_MODE){ std::cout<<"nfactors = "<<nfactors<<std::endl; }
     for (i = 0; i < nfactors; ++i){
         fstr>>nvars;
         f.push_back(std::vector<int>());
         all_factors.push_back(std::vector<int>());
         l.push_back(std::vector<double>());
-        if (DEBUG_MODE){ std::cout<<"factor_size["<<i<<"] = "<<nvars<<std::endl; }
+        if (MPLP_DEBUG_MODE){ std::cout<<"factor_size["<<i<<"] = "<<nvars<<std::endl; }
         for (j = 0; j < nvars; ++j){
             fstr>>curr_var;  //those are the cliques
             f[i].push_back(curr_var);
-            if (DEBUG_MODE){ std::cout<<"all_factors["<<i<<"]["<<j<<"] = "<<f[i][j]<<std::endl; }
+            if (MPLP_DEBUG_MODE){ std::cout<<"all_factors["<<i<<"]["<<j<<"] = "<<f[i][j]<<std::endl; }
             if (evidence.find(curr_var) == evidence.end()){
                 all_factors[i].push_back(curr_var);
             }
@@ -144,9 +144,9 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::map<int, int> & 
         for (j = 0; j < nvars; ++j){
             fstr>>val;
             // We work in log space, so take the log of the factors' potentials
-            l[i].push_back(val > 0 ? log(val) : -huge);
-            if (DEBUG_MODE){ std::cout<<"e^all_lambdas["<<i<<"]["<<j<<"] = "<<val<<std::endl; }
-            if (DEBUG_MODE){ std::cout<<"all_lambdas["<<i<<"]["<<j<<"] = "<<l[i][j]<<std::endl; }
+            l[i].push_back(val > 0 ? log(val) : -MPLP_huge);
+            if (MPLP_DEBUG_MODE){ std::cout<<"e^all_lambdas["<<i<<"]["<<j<<"] = "<<val<<std::endl; }
+            if (MPLP_DEBUG_MODE){ std::cout<<"all_lambdas["<<i<<"]["<<j<<"] = "<<l[i][j]<<std::endl; }
         }
         for (j = 0; j < f[i].size(); ++j){
             if (evidence.find(f[i][j]) != evidence.end()){
@@ -166,7 +166,7 @@ int mplpLib::read_model_file(std::vector<int> & var_sizes, std::map<int, int> & 
         get_lambdas(base, fact, 0, 0, var_sizes, evidence, curr_evid, f[i], l[i], lambdas);
         all_lambdas.push_back(lambdas);
 
-        if(DEBUG_MODE) {
+        if(MPLP_DEBUG_MODE) {
             if(lambdas.size() != l[i].size()) {
                 std::cout << "THERE WAS EVIDENCE AND WE SHRUNK THE FACTOR! New size: " << lambdas.size() << ", Old size: " << l[i].size() << std::endl;
             }
@@ -195,7 +195,7 @@ int mplpLib::read_model_file2(std::vector<int> & var_sizes, std::map<int, int> &
                 while (evid_size--){
                     fstr>>curr_var;
                     fstr>>curr_val;
-                    if (DEBUG_MODE){ std::cout<<"evidence variable: observing var["<<curr_var<<"] == "<<curr_val<<";"<<std::endl; }
+                    if (MPLP_DEBUG_MODE){ std::cout<<"evidence variable: observing var["<<curr_var<<"] == "<<curr_val<<";"<<std::endl; }
                     evidence[curr_var] = curr_val;
                 }
             }
@@ -212,24 +212,24 @@ int mplpLib::read_model_file2(std::vector<int> & var_sizes, std::map<int, int> &
         std::cerr<<"Error: file is not in MARKOV format."<<std::endl;
     }
     fstr>>nvars;
-    if (DEBUG_MODE){ std::cout<<"nvars = "<<nvars<<std::endl; }
+    if (MPLP_DEBUG_MODE){ std::cout<<"nvars = "<<nvars<<std::endl; }
     for (i = 0; i < nvars; ++i){
         fstr>>v;
         var_sizes.push_back(v);
-        if (DEBUG_MODE){ std::cout<<"var_sizes["<<i<<"] = "<<var_sizes[i]<<std::endl; }
+        if (MPLP_DEBUG_MODE){ std::cout<<"var_sizes["<<i<<"] = "<<var_sizes[i]<<std::endl; }
     }
     fstr>>nfactors;
-    if (DEBUG_MODE){ std::cout<<"nfactors = "<<nfactors<<std::endl; }
+    if (MPLP_DEBUG_MODE){ std::cout<<"nfactors = "<<nfactors<<std::endl; }
     for (i = 0; i < nfactors; ++i){
         fstr>>nvars;
         f.push_back(std::vector<int>());
         all_factors.push_back(std::vector<int>());
         l.push_back(std::vector<double>());
-        if (DEBUG_MODE){ std::cout<<"factor_size["<<i<<"] = "<<nvars<<std::endl; }
+        if (MPLP_DEBUG_MODE){ std::cout<<"factor_size["<<i<<"] = "<<nvars<<std::endl; }
         for (j = 0; j < nvars; ++j){
             fstr>>curr_var;  //those are the cliques
             f[i].push_back(curr_var);
-            if (DEBUG_MODE){ std::cout<<"all_factors["<<i<<"]["<<j<<"] = "<<f[i][j]<<std::endl; }
+            if (MPLP_DEBUG_MODE){ std::cout<<"all_factors["<<i<<"]["<<j<<"] = "<<f[i][j]<<std::endl; }
             if (evidence.find(curr_var) == evidence.end()){
                 all_factors[i].push_back(curr_var);
             }
@@ -256,10 +256,10 @@ int mplpLib::read_model_file2(std::vector<int> & var_sizes, std::map<int, int> &
             for (j = 0; j < nvars; ++j){
                 fstr>>val;
                 // We work in log space, so take the log of the factors' potentials
-                //l[i].push_back(val > 0 ? log(val) : -huge);
+                //l[i].push_back(val > 0 ? log(val) : -MPLP_huge);
                 l[i].push_back(val);
-                if (DEBUG_MODE){ std::cout<<"e^all_lambdas["<<i<<"]["<<j<<"] = "<<val<<std::endl; }
-                if (DEBUG_MODE){ std::cout<<"all_lambdas["<<i<<"]["<<j<<"] = "<<l[i][j]<<std::endl; }
+                if (MPLP_DEBUG_MODE){ std::cout<<"e^all_lambdas["<<i<<"]["<<j<<"] = "<<val<<std::endl; }
+                if (MPLP_DEBUG_MODE){ std::cout<<"all_lambdas["<<i<<"]["<<j<<"] = "<<l[i][j]<<std::endl; }
             }
         }
 

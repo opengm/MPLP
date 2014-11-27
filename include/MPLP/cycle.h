@@ -20,11 +20,11 @@
 
 namespace mplpLib {
 
-#define DEBUG_MODE 1
+#define MPLP_DEBUG_MODE 1
 
-#define Inf 9999999999.9
-#define CYCLE_THRESH .00001  // TODO: Figure out how to set this
-#define CLUSTER_THR .0000001
+#define MPLP_Inf 9999999999.9
+#define MPLP_CYCLE_THRESH .00001  // TODO: Figure out how to set this
+#define MPLP_CLUSTER_THR .0000001
 
 typedef std::map<std::pair<int, int>, int> mapType;
 typedef std::vector<std::vector<std::pair<int, double> > > adj_type;
@@ -133,7 +133,7 @@ double getValCycle(std::vector<MulDimArr*> & beliefs, std::vector<bool> & b_tran
 
 double maximizeCycle(std::vector<MulDimArr*> & beliefs, std::vector<bool> & b_transpose)
 {
-    double max_val = -Inf;
+    double max_val = -MPLP_Inf;
 
     // Fix value of the first variable
     int first_var_size = beliefs[0]->m_base_sizes[b_transpose[0]?1:0];
@@ -161,7 +161,7 @@ double maximizeCycle(std::vector<MulDimArr*> & beliefs, std::vector<bool> & b_tr
                 inds[b_transpose[i]?0:1] = v2;
 
                 // Take max
-                double tmp_max_val = -Inf;
+                double tmp_max_val = -MPLP_Inf;
                 for(int v1=0; v1 < field.size(); v1++)
                 {
                     inds[b_transpose[i]?1:0] = v1;
@@ -178,7 +178,7 @@ double maximizeCycle(std::vector<MulDimArr*> & beliefs, std::vector<bool> & b_tr
         inds[b_transpose[b_transpose.size()-1]?0:1] = vo;
 
         // Take max
-        double tmp_max_val = -Inf;
+        double tmp_max_val = -MPLP_Inf;
         for(int v1=0; v1 < field.size(); v1++)
         {
             inds[b_transpose[b_transpose.size()-1]?1:0] = v1;
@@ -198,7 +198,7 @@ int TightenTriplet(MPLPAlg & mplp, int nclus_to_add_min, int nclus_to_add_max, s
     int nClustersAdded = 0;
     int nNewClusters = 0;
 
-    if(DEBUG_MODE)
+    if(MPLP_DEBUG_MODE)
         std::cout << "Doing pre-processing for adding triplet clusters." << std::endl;
 
     // Initialize adjacency list (filled in later) TODO: only do this when needed
@@ -242,14 +242,14 @@ int TightenTriplet(MPLPAlg & mplp, int nclus_to_add_min, int nclus_to_add_max, s
     }
 
     if(nNewClusters == 0) {
-        if(DEBUG_MODE)
+        if(MPLP_DEBUG_MODE)
             std::cout << "nNewClusters = 0. Returning." << std::endl;
 
         delete []adjacency_list;
         return 0;
     }
 
-    if(DEBUG_MODE)
+    if(MPLP_DEBUG_MODE)
         std::cout << "Looking for triangle clusters to add (" << nNewClusters << " triplets) " << std::endl;
 
     // TODO: put this elsewhere so that the space isn't re-allocated continuously?
@@ -325,13 +325,13 @@ int TightenTriplet(MPLPAlg & mplp, int nclus_to_add_min, int nclus_to_add_max, s
     // Sort the clusters by the bound
     std::sort(newCluster, newCluster+nNewClusters);
 
-    if(DEBUG_MODE)
+    if(MPLP_DEBUG_MODE)
         printf(" -- Considered %d clusters, smallest bound %g, largest bound %g\n", nNewClusters, newCluster[std::max(nNewClusters-nclus_to_add_max, 0)].bound, newCluster[nNewClusters-1].bound);
 
     promised_bound = newCluster[nNewClusters-1].bound;
 
     // Add the top nclus_to_add clusters to the relaxation
-    for(int clusterId = nNewClusters-1; clusterId >= 0 && nClustersAdded < nclus_to_add_max && (nClustersAdded < nclus_to_add_min || ((newCluster[clusterId].bound >= newCluster[nNewClusters-1].bound/5) && newCluster[clusterId].bound >= CLUSTER_THR)) ; clusterId--)
+    for(int clusterId = nNewClusters-1; clusterId >= 0 && nClustersAdded < nclus_to_add_max && (nClustersAdded < nclus_to_add_min || ((newCluster[clusterId].bound >= newCluster[nNewClusters-1].bound/5) && newCluster[clusterId].bound >= MPLP_CLUSTER_THR)) ; clusterId--)
     {
         // Check to see if this triplet is already being used
         std::vector<int> temp;
@@ -344,7 +344,7 @@ int TightenTriplet(MPLPAlg & mplp, int nclus_to_add_min, int nclus_to_add_max, s
         if (t_itr == triplet_set.end())
             triplet_set.insert(std::pair<std::vector<int>, bool >(temp, true));
         else {
-            //	if(DEBUG_MODE)
+            //	if(MPLP_DEBUG_MODE)
             //	  cout << "   Triplet was already present. Skipping..." << endl;
             continue;
         }
@@ -360,7 +360,7 @@ int TightenTriplet(MPLPAlg & mplp, int nclus_to_add_min, int nclus_to_add_max, s
 
         mplp.AddRegion(ijk_inds, ijk_intersect_inds);
 
-        if(DEBUG_MODE)
+        if(MPLP_DEBUG_MODE)
             printf("Cluster added on nodes %d, %d, %d\n", newCluster[clusterId].i, newCluster[clusterId].j, newCluster[clusterId].k);
         // TODO: log which clusters are chosen...
 
@@ -412,7 +412,7 @@ double find_smn(const std::vector<int>& partition_i, int var_i_size, const std::
         whole_j[i] = 0;
     }
 
-    double smn = -Inf;
+    double smn = -MPLP_Inf;
     for (int i = 0; i < partition_i.size(); i++) {
         whole_i[partition_i[i]] = 1;
         for (int j = 0; j < partition_j.size(); j++) {
@@ -420,7 +420,7 @@ double find_smn(const std::vector<int>& partition_i, int var_i_size, const std::
         }
     }
 
-    double sec_max = -Inf;
+    double sec_max = -MPLP_Inf;
     for (int i = 0; i < var_i_size; i++) {
         for (int j = 0; j < var_j_size; j++) {
             if (whole_i[i] == whole_j[j]) {
@@ -446,7 +446,7 @@ double find_smn(const std::vector<int>& partition_i, int var_i_size, const std::
 // Compute a single edge weight in the projection graph (more efficiently)
 double find_smn_state_i(int single_i, int var_i_size, const std::vector<int>& partition_j, int var_j_size, MulDimArr* edge_belief, std::vector<std::vector<double> >& max_i_bij_not_xi) {
     double max, sec_max;
-    max = sec_max = -Inf;
+    max = sec_max = -MPLP_Inf;
     double whole_i[var_i_size];
     double whole_j[var_j_size];
     for (int i = 0; i < var_i_size; i++) {
@@ -484,7 +484,7 @@ double find_smn_state_i(int single_i, int var_i_size, const std::vector<int>& pa
 // Compute a single edge weight in the projection graph (more efficiently)
 double find_smn_state_j(const std::vector<int>& partition_i, int var_i_size, int single_j, int var_j_size, MulDimArr* edge_belief, std::vector<std::vector<double> >& max_j_bij_not_xj) {
     double max, sec_max;
-    max = sec_max = -Inf;
+    max = sec_max = -MPLP_Inf;
     double whole_i[var_i_size];
     double whole_j[var_j_size];
     for (int i = 0; i < var_i_size; i++) {
@@ -713,7 +713,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
         }
         clock_t find_partition_end_time = clock();
         double find_partition_total_time = (double)(find_partition_end_time - find_partition_start_time)/CLOCKS_PER_SEC;
-        if (DEBUG_MODE) {
+        if (MPLP_DEBUG_MODE) {
             printf(" -- find_partition. Took %lg seconds\n", find_partition_total_time);
         }
     }
@@ -755,7 +755,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
         for(int state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
             // Find max over state2
-            double largest_val = -Inf;
+            double largest_val = -MPLP_Inf;
             int largest_ind = -1;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
 
@@ -769,7 +769,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
             }
 
             // Find second largest val over state2
-            double sec_largest_val = -Inf;
+            double sec_largest_val = -MPLP_Inf;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
 
                 std::vector<int> inds; inds.push_back(state1); inds.push_back(state2);
@@ -792,7 +792,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
         for(int state1=0; state1 < mplp.m_var_sizes[j]; state1++) {
 
             // Find max over state2
-            double largest_val = -Inf;
+            double largest_val = -MPLP_Inf;
             int largest_ind = -1;
             for(int state2=0; state2 < mplp.m_var_sizes[i]; state2++) {
 
@@ -806,7 +806,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
             }
 
             // Find second largest val over state2
-            double sec_largest_val = -Inf;
+            double sec_largest_val = -MPLP_Inf;
             for(int state2=0; state2 < mplp.m_var_sizes[i]; state2++) {
 
                 std::vector<int> inds; inds.push_back(state2); inds.push_back(state1);
@@ -831,7 +831,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
         for(int state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
             // Find max over state2
-            double largest_val = -Inf;
+            double largest_val = -MPLP_Inf;
             int largest_ind = -1;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
                 double tmp_val = max_i_bij_not_xi[state1][state2];
@@ -843,7 +843,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
             }
 
             // Find second largest val over state2
-            double sec_largest_val = -Inf;
+            double sec_largest_val = -MPLP_Inf;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
                 double tmp_val = max_i_bij_not_xi[state1][state2];
 
@@ -902,7 +902,7 @@ int create_expanded_projection_graph(MPLPAlg& mplp, std::vector<int>& projection
     }
     clock_t find_smn_end_time = clock();
     double find_smn_total_time = (double)(find_smn_end_time - find_smn_start_time)/CLOCKS_PER_SEC;
-    if (DEBUG_MODE) {
+    if (MPLP_DEBUG_MODE) {
         printf(" -- find_smn. Took %lg seconds\n", find_smn_total_time);
     }
 
@@ -977,7 +977,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<int> > &pr
         for(int state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
             // Find max over state2
-            double largest_val = -Inf;
+            double largest_val = -MPLP_Inf;
             int largest_ind = -1;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
 
@@ -991,7 +991,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<int> > &pr
             }
 
             // Find second largest val over state2
-            double sec_largest_val = -Inf;
+            double sec_largest_val = -MPLP_Inf;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
 
                 std::vector<int> inds; inds.push_back(state1); inds.push_back(state2);
@@ -1012,7 +1012,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<int> > &pr
         for(int state1=0; state1 < mplp.m_var_sizes[j]; state1++) {
 
             // Find max over state2
-            double largest_val = -Inf;
+            double largest_val = -MPLP_Inf;
             int largest_ind = -1;
             for(int state2=0; state2 < mplp.m_var_sizes[i]; state2++) {
 
@@ -1026,7 +1026,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<int> > &pr
             }
 
             // Find second largest val over state2
-            double sec_largest_val = -Inf;
+            double sec_largest_val = -MPLP_Inf;
             for(int state2=0; state2 < mplp.m_var_sizes[i]; state2++) {
 
                 std::vector<int> inds; inds.push_back(state2); inds.push_back(state1);
@@ -1048,7 +1048,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<int> > &pr
         for(int state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
             // Find max over state2
-            double largest_val = -Inf;
+            double largest_val = -MPLP_Inf;
             int largest_ind = -1;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
                 double tmp_val = max_i_bij_not_xi[state1][state2];
@@ -1060,7 +1060,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<int> > &pr
             }
 
             // Find second largest val over state2
-            double sec_largest_val = -Inf;
+            double sec_largest_val = -MPLP_Inf;
             for(int state2=0; state2 < mplp.m_var_sizes[j]; state2++) {
                 double tmp_val = max_i_bij_not_xi[state1][state2];
 
@@ -1217,7 +1217,7 @@ void FindCycles(std::vector<std::list<int> > &cycle_set, double optimal_R, int n
 
     // construct the rooted spanning tree(s) -- randomly choose a root!
     int* random_projection_node = random_permutation(num_projection_nodes);
-    //  if(DEBUG_MODE) {
+    //  if(MPLP_DEBUG_MODE) {
     //    cout << "First random node is: " << random_projection_node[0] << endl;
     //  }
 
@@ -1464,7 +1464,7 @@ int add_cycle(MPLPAlg& mplp, std::list<int> &cycle, std::vector<int> &projection
     // Convert cycle to array
     int cycle_array[cycle.size()]; int tmp_ind = 0;
     for (std::list<int>::iterator it=cycle.begin(); it!=cycle.end(); ++it) { // this is unnecesary
-        //    if (DEBUG_MODE) {
+        //    if (MPLP_DEBUG_MODE) {
         //      if (*it >= num_projection_nodes) {
         //        cout << "Cycle uses non-trivial partitionining." << endl;
         //      }
@@ -1505,7 +1505,7 @@ int add_cycle(MPLPAlg& mplp, std::list<int> &cycle, std::vector<int> &projection
         // Check to see if this cluster involves two of the same variables
         // (could happen because we didn't shortcut)
         if(temp[0] == temp[1] || temp[0] == temp[2] || temp[1] == temp[2]) {
-            //      if(DEBUG_MODE)
+            //      if(MPLP_DEBUG_MODE)
             //	cout << "skipping this triplet because it is an edge." << endl;
             continue;
         }
@@ -1514,7 +1514,7 @@ int add_cycle(MPLPAlg& mplp, std::list<int> &cycle, std::vector<int> &projection
         if (t_itr == triplet_set.end())
             triplet_set.insert(std::pair<std::vector<int>, bool >(temp, true));
         else {
-            //	if(DEBUG_MODE)
+            //	if(MPLP_DEBUG_MODE)
             //	  cout << "   Triplet was already present. Skipping..." << endl;
             continue;
         }
@@ -1572,7 +1572,7 @@ int TightenCycle(MPLPAlg & mplp, int nclus_to_add,  std::map<std::vector<int>, b
     int nClustersAdded = 0;
     int nNewClusters;
 
-    if (DEBUG_MODE) std::cout << "Finding the most violated cycle...." << std::endl;
+    if (MPLP_DEBUG_MODE) std::cout << "Finding the most violated cycle...." << std::endl;
 
     // This map allows us to quickly look up the edge weights
     std::map<std::pair<int, int>, double> projection_edge_weights;
@@ -1596,7 +1596,7 @@ int TightenCycle(MPLPAlg & mplp, int nclus_to_add,  std::map<std::vector<int>, b
 
     std::vector<std::list<int> > cycle_set;
     double optimal_R = find_optimal_R(projection_adjacency_list, array_of_sij, array_of_sij_size);
-    if (DEBUG_MODE) std::cout << "R_optimal = " << optimal_R << std::endl;
+    if (MPLP_DEBUG_MODE) std::cout << "R_optimal = " << optimal_R << std::endl;
 
     promised_bound = optimal_R;
 
@@ -1618,7 +1618,7 @@ int TightenCycle(MPLPAlg & mplp, int nclus_to_add,  std::map<std::vector<int>, b
 
     clock_t end_time = clock();
     double total_time = (double)(end_time - start_time)/CLOCKS_PER_SEC;
-    if (DEBUG_MODE) {
+    if (MPLP_DEBUG_MODE) {
         printf(" -- FindCycles. Took %lg seconds\n", total_time);
     } 
 
@@ -1631,7 +1631,7 @@ int TightenCycle(MPLPAlg & mplp, int nclus_to_add,  std::map<std::vector<int>, b
         //    shortcut(cycle_set[z], projection_imap_var, projection_edge_weights, num_projection_nodes);
 
         // Output the cycle
-        if (DEBUG_MODE){
+        if (MPLP_DEBUG_MODE){
             for (std::list<int>::iterator it=cycle_set[z].begin(); it!=cycle_set[z].end(); ++it) {
                 std::cout << projection_imap_var[*it] << "(";
                 std::vector<int> temp = partition_imap[*it];
@@ -1648,7 +1648,7 @@ int TightenCycle(MPLPAlg & mplp, int nclus_to_add,  std::map<std::vector<int>, b
 
     end_time = clock();
     total_time = (double)(end_time - start_time)/CLOCKS_PER_SEC;
-    if (DEBUG_MODE) {
+    if (MPLP_DEBUG_MODE) {
         printf(" -- shortcut + add_cycles. Took %lg seconds\n", total_time);
     }
 

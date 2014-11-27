@@ -17,8 +17,8 @@
 
 namespace mplpLib {
 
-#define huge 1e40
-#define BASE2DEC_PAIR(x1,x2,base1,base2) (x1*base2+x2)
+#define MPLP_huge 1e40
+#define MPLP_BASE2DEC_PAIR(x1,x2,base1,base2) (x1*base2+x2)
 
 class MulDimArr 
 {
@@ -98,7 +98,7 @@ inline int MulDimArr::GetFlatIndFromBigSpecial(std::vector<int> & big_base_inds,
         //			cout << "Not good here too" << endl;
         ind1 = inds_in_big[0];
         ind2 = inds_in_big[1];
-        y = BASE2DEC_PAIR(big_base_inds[ind1],big_base_inds[ind2],m_base_sizes[0],m_base_sizes[1]);
+        y = MPLP_BASE2DEC_PAIR(big_base_inds[ind1],big_base_inds[ind2],m_base_sizes[0],m_base_sizes[1]);
         break;
     default:
         std::cout << "GetFlatIndFromBigSpecial problem" << std::endl;

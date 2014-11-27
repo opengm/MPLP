@@ -21,10 +21,10 @@
 
 using namespace std;
 
-#define DEBUG_MODE 1
+#define MPLP_DEBUG_MODE 1
 
 // Gap used within decoding algorithm. TODO: Better algorithm for choosing this (perhaps iteratively).
-#define GAP_THR .001
+#define MPLP_GAP_THR .001
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Code to implement the Region object.
@@ -77,7 +77,7 @@ void mplpLib::Region::AddIntersectionSet(int intersect_loc, vector<vector<int> >
     vector<int> curr_intersect = all_intersects[intersect_loc];
 
     /*
-	if(DEBUG_MODE) {
+	if(MPLP_DEBUG_MODE) {
 	  for (int i=0; i< curr_intersect.size(); ++i){
 	    int var_in_intersect = curr_intersect[i];
 	    cout << "   " << var_in_intersect;
@@ -103,7 +103,7 @@ void mplpLib::Region::AddIntersectionSet(int intersect_loc, vector<vector<int> >
         }
     }
 
-    /*	if(DEBUG_MODE) {
+    /*	if(MPLP_DEBUG_MODE) {
 	  cout << "intersection locs: ";
 	  for(int i=0; i<tmp_inds_of_intersects.size(); i++) {
 
@@ -144,7 +144,7 @@ void mplpLib::Region::UpdateMsgs(vector<MulDimArr> & sum_into_intersects)
         vector<int> & curr_inds_of_intersect = m_inds_of_intersects[si];
 
         /*
-		if(DEBUG_MODE) {
+		if(MPLP_DEBUG_MODE) {
 		  cout << "Intersection set { ";
 		  for(int i=0; i < curr_inds_of_intersect.size(); i++) {
 		    cout << curr_inds_of_intersect[i] << " ";
@@ -199,7 +199,7 @@ void mplpLib::Region::UpdateMsgs(vector<MulDimArr> & sum_into_intersects)
 // Code to read in factor graph and initialize MPLP.
 ////////////////////////////////////////////////////////////////////////////////
 
-mplpLib::MPLPAlg::MPLPAlg(clock_t start, int time_limit, const std::string model_file, const std::string evid_file, FILE *log_file, bool uaiCompetition) : start(start), time_limit(time_limit), begin(false), m_best_val(-huge), last_obj(huge), total_mplp_iterations(0), previous_run_of_global_decoding(-1), obj_del(huge), _log_file(log_file), m_uaiCompetition(uaiCompetition) {
+mplpLib::MPLPAlg::MPLPAlg(clock_t start, int time_limit, const std::string model_file, const std::string evid_file, FILE *log_file, bool uaiCompetition) : start(start), time_limit(time_limit), begin(false), m_best_val(-MPLP_huge), last_obj(MPLP_huge), total_mplp_iterations(0), previous_run_of_global_decoding(-1), obj_del(MPLP_huge), _log_file(log_file), m_uaiCompetition(uaiCompetition) {
 
     size_t n;
     _res_fname = model_file.substr( (n = model_file.find_last_of('/')) == std::string::npos ? 0 : n + 1 ).append(".MPE");
@@ -223,7 +223,7 @@ mplpLib::MPLPAlg::MPLPAlg(clock_t start, int time_limit, const std::string model
 }
 
 void mplpLib::MPLPAlg::Init(const std::string fn, const std::string evid_fn){
-    if(DEBUG_MODE)
+    if(MPLP_DEBUG_MODE)
         cout << "Calling Init() code...\n";
 
     std::vector<int> var_sizes;
@@ -238,7 +238,7 @@ void mplpLib::MPLPAlg::Init(const std::string fn, const std::string evid_fn){
 }
 
 void mplpLib::MPLPAlg::Init2(const std::string fn, const std::string evid_fn){
-    if(DEBUG_MODE)
+    if(MPLP_DEBUG_MODE)
         cout << "Calling Init2() code...\n";
 
     std::vector<int> var_sizes;
@@ -276,7 +276,7 @@ void mplpLib::MPLPAlg::Init(vector<int> & var_sizes, vector<vector<int> > & all_
             region_var_sizes.push_back(m_var_sizes[all_region_inds[ri][i]]);
         }
 
-        /*		if(DEBUG_MODE) {
+        /*		if(MPLP_DEBUG_MODE) {
 		  if(all_region_inds[ri].size() == 0) {
 		    cout << "Length zero region!" << endl;
 		  }
@@ -359,7 +359,7 @@ void mplpLib::MPLPAlg::Init(vector<int> & var_sizes, vector<vector<int> > & all_
             }
 
             if(isCSP) {
-                if(DEBUG_MODE) cout << "Likely CSP instance. Randomly perturbing objective." << endl;
+                if(MPLP_DEBUG_MODE) cout << "Likely CSP instance. Randomly perturbing objective." << endl;
                 CSP_instance = true;
 
                 for(int si=0; si < m_var_sizes.size(); ++si) {
@@ -403,14 +403,14 @@ void mplpLib::MPLPAlg::RunMPLP(int niter, double obj_del_thr, double int_gap_thr
         // Run global decoding at least once, a third of the way through
         if(previous_run_of_global_decoding == -1 &&
                 ((double)(clock() - start) / CLOCKS_PER_SEC) > time_limit/3) {
-            if(DEBUG_MODE)
+            if(MPLP_DEBUG_MODE)
                 cout << "Third of the way! Going to run global decoding once." << endl;
             RunGlobalDecoding(false);
         }
 
         int_gap = obj - m_best_val;
 
-        if (DEBUG_MODE){
+        if (MPLP_DEBUG_MODE){
             cout << "Iter=" << (it+1) << " Objective=" << obj <<  " Decoded=" << m_best_val << " ObjDel=" <<  obj_del << " IntGap=" << int_gap << endl;
         }
         if(_log_file != 0){
@@ -428,7 +428,7 @@ void mplpLib::MPLPAlg::RunMPLP(int niter, double obj_del_thr, double int_gap_thr
 void mplpLib::MPLPAlg::AddAllEdgeIntersections()
 {
 
-    if(DEBUG_MODE) cout << "Adding all edge intersection sets..." << endl;
+    if(MPLP_DEBUG_MODE) cout << "Adding all edge intersection sets..." << endl;
 
     // Iterate over all of the regions
     for (int ri=0; ri<m_all_regions.size(); ++ri){
@@ -492,7 +492,7 @@ int mplpLib::MPLPAlg::AddIntersectionSet(vector<int> & inds_of_vars)
         vector<int> tmp_inds(inds_of_vars);
         sort(tmp_inds.begin(), tmp_inds.end());
 
-        //		if(DEBUG_MODE)
+        //		if(MPLP_DEBUG_MODE)
         //		  cout << "adding edge intersection set " << tmp_inds[0] << " " << tmp_inds[1] << endl;
 
         // Then insert
@@ -581,10 +581,10 @@ double mplpLib::MPLPAlg::UpdateResult(void){
     double int_val;
     if ( (int_val = IntVal(m_decoded_res)) > m_best_val){
 
-        if(DEBUG_MODE)
+        if(MPLP_DEBUG_MODE)
             cout << "int val: " << int_val << endl;
 
-        if (time_limit + (double)(start - clock()) / CLOCKS_PER_SEC > MIN_APP_TIME){ // Prevent a partial write
+        if (time_limit + (double)(start - clock()) / CLOCKS_PER_SEC > MPLP_MIN_APP_TIME){ // Prevent a partial write
             Write(_res_fname.c_str());
         }
         m_best_decoded_res.assign(m_decoded_res.begin(), m_decoded_res.end());
@@ -634,7 +634,7 @@ void mplpLib::MPLPAlg::Write(const char *res_fname, const char *msgs_fname, cons
 
 void mplpLib::MPLPAlg::RunGlobalDecoding(bool exhaustive){
 
-    if(DEBUG_MODE) {
+    if(MPLP_DEBUG_MODE) {
         cout << "Running global decoding..." << endl;
     }
 
@@ -676,7 +676,7 @@ void mplpLib::MPLPAlg::RunGlobalDecoding(bool exhaustive){
     }
 
     while (!not_decoded.empty()){
-        double biggest_gap = -huge;
+        double biggest_gap = -MPLP_huge;
         for (std::set<int>::iterator s_it = not_decoded.begin(); s_it != not_decoded.end(); ++s_it){
             if( ( gap_vals[*s_it] = gap(*s_it, m) ) >= biggest_gap)
                 biggest_gap = gap_vals[*s_it];
@@ -688,7 +688,7 @@ void mplpLib::MPLPAlg::RunGlobalDecoding(bool exhaustive){
         else
             biggest_gap /= 10;
 
-        if(DEBUG_MODE){
+        if(MPLP_DEBUG_MODE){
             cout << "biggest gap now set to " << biggest_gap << ", remaining nodes = " << not_decoded.size() << ", new int sol = " << m_best_val << endl;
         }
 
@@ -702,10 +702,10 @@ void mplpLib::MPLPAlg::RunGlobalDecoding(bool exhaustive){
                 not_decoded.erase(*s_it);
 
                 for (i = 0; i < max_at[*s_it]; ++i){
-                    m_sum_into_intersects[*s_it][i] = -huge;
+                    m_sum_into_intersects[*s_it][i] = -MPLP_huge;
                 }
                 while (++i < m_var_sizes[*s_it]){
-                    m_sum_into_intersects[*s_it][i] = -huge;
+                    m_sum_into_intersects[*s_it][i] = -MPLP_huge;
                 }
 
                 if(exhaustive)
@@ -754,7 +754,7 @@ void mplpLib::MPLPAlg::RunGlobalDecoding(bool exhaustive){
 //note: sorting gap values in ascending order and fixing the node with lowest gap value first (to resolve possible frustration)
 // TODO: put some randomness into this! Of all tied states, randomly sample. Or, randomly permute tied nodes, then choose 1. Or both.
 void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
-    if(DEBUG_MODE) {
+    if(MPLP_DEBUG_MODE) {
         cout << "Running global decoding2..." << endl;
     }
 
@@ -797,7 +797,7 @@ void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
 
     while (!not_decoded.empty()){
         int i;
-        double smallest_gap = huge;
+        double smallest_gap = MPLP_huge;
         int index_smallest = -1;
         for (std::set<int>::iterator s_it = not_decoded.begin(); s_it != not_decoded.end(); ++s_it){
             if( ( gap_vals[*s_it] = gap(*s_it, m) ) < smallest_gap) {
@@ -805,7 +805,7 @@ void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
                 index_smallest = *s_it;
             }else if (gap_vals[*s_it] == smallest_gap){
                 if (rand() % 2){   //some randomness for tied nodes (but this may still not be uniform)
-                    if(DEBUG_MODE)
+                    if(MPLP_DEBUG_MODE)
                         cout << "Adding some randomness to globaldecoding2" << endl;
                     index_smallest = *s_it;
                 }
@@ -813,10 +813,10 @@ void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
             max_at[*s_it] = m;
         }
         // Stopping criterion
-        if(!exhaustive && smallest_gap > GAP_THR)
+        if(!exhaustive && smallest_gap > MPLP_GAP_THR)
             break;
 
-        if(DEBUG_MODE)
+        if(MPLP_DEBUG_MODE)
             cout << "Fixing node " << index_smallest << " to value " << max_at[index_smallest] << endl;
 
         // Fix one at a time
@@ -825,10 +825,10 @@ void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
         not_decoded.erase(index_smallest);
 
         for (i = 0; i < max_at[index_smallest]; ++i){
-            m_sum_into_intersects[index_smallest][i] = -huge;
+            m_sum_into_intersects[index_smallest][i] = -MPLP_huge;
         }
         while (++i < m_var_sizes[index_smallest]){
-            m_sum_into_intersects[index_smallest][i] = -huge;
+            m_sum_into_intersects[index_smallest][i] = -MPLP_huge;
         }
 
         for (int it=0; it<10; ++it){
@@ -842,14 +842,14 @@ void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
             UpdateResult();
         }
 
-        //		if(DEBUG_MODE){
+        //		if(MPLP_DEBUG_MODE){
         //		  cout << "new int sol = " << m_best_val << endl;
         //		}
 
         // Give up after 100 rounds (1000 total MPLP iterations)
         if(!exhaustive && num_mplp_iters_global_decoding >= 1000) {
 
-            if(DEBUG_MODE)
+            if(MPLP_DEBUG_MODE)
                 cout << "Exhausted number of rounds for global decoding. Quitting." << endl;
             break;
         }
@@ -880,7 +880,7 @@ void mplpLib::MPLPAlg::RunGlobalDecoding2(bool exhaustive){
 // Do large numbers of random objective permutations, run 10 iterations of MPLP, restore
 void mplpLib::MPLPAlg::RunGlobalDecoding3(void){
 
-    if(DEBUG_MODE) {
+    if(MPLP_DEBUG_MODE) {
         cout << "Running global decoding3..." << endl;
     }
 
@@ -944,11 +944,11 @@ bool mplpLib::MPLPAlg::RunDecimation(void){
     bool fixed_node = false;
 
     int i, m;
-    double biggest_gap = -huge;
+    double biggest_gap = -MPLP_huge;
     int *max_at = new int[m_var_sizes.size()];
     double *gap_vals = new double[m_var_sizes.size()];
     std::vector<int> not_decoded;
-    if(DEBUG_MODE) {
+    if(MPLP_DEBUG_MODE) {
         cout << "Running decimation..." << endl;
     }
     for (int i = 0; i < m_var_sizes.size(); ++i){
@@ -960,7 +960,7 @@ bool mplpLib::MPLPAlg::RunDecimation(void){
         if( ( gap_vals[*s_it] = gap(*s_it, m) ) >= biggest_gap){
             biggest_gap = gap_vals[*s_it];
         }
-        if(DEBUG_MODE) {
+        if(MPLP_DEBUG_MODE) {
             //		  cout << "gap " << gap_vals[*s_it] << endl;
         }
         max_at[*s_it] = m;
@@ -970,7 +970,7 @@ bool mplpLib::MPLPAlg::RunDecimation(void){
     for (std::vector<int>::iterator s_it = not_decoded.begin(); s_it != not_decoded.end(); ++s_it){
         if (gap_vals[*s_it] >= biggest_gap){   //gap stores argmax of reparametrized local potential in max_at
 
-            //		  if(DEBUG_MODE) {
+            //		  if(MPLP_DEBUG_MODE) {
             //		    cout << "Fixing node " << *s_it << endl;
             //		  }
             fixed_node = true;
@@ -978,10 +978,10 @@ bool mplpLib::MPLPAlg::RunDecimation(void){
             evidence[*s_it] = max_at[*s_it];   //note: this is permanently fixed for the current instance of MPLP
             m_decoded_res[*s_it] = max_at[*s_it];
             for (i = 0; i < max_at[*s_it]; ++i){
-                m_sum_into_intersects[*s_it][i] = -huge;
+                m_sum_into_intersects[*s_it][i] = -MPLP_huge;
             }
             while (++i < m_var_sizes[*s_it]){
-                m_sum_into_intersects[*s_it][i] = -huge;
+                m_sum_into_intersects[*s_it][i] = -MPLP_huge;
             }
         }
     }
@@ -994,9 +994,9 @@ bool mplpLib::MPLPAlg::RunDecimation(void){
 double mplpLib::MPLPAlg::gap(int n, int & max_at) const{
     if (m_var_sizes[n] < 2){
         max_at = 0;
-        return huge;
+        return MPLP_huge;
     }
-    double m, m1 = -huge, m2 = -huge;
+    double m, m1 = -MPLP_huge, m2 = -MPLP_huge;
     for (int s = 0; s < m_var_sizes[n]; ++s){
         if ((m = m_sum_into_intersects[n][s]) > m1){
             m2 = m1;

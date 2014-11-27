@@ -21,7 +21,7 @@
 
 namespace mplpLib {
 
-#define MIN_APP_TIME .0001  //amount of time reserved for appending an answer into a file (to prevent any partially written answers)
+#define MPLP_MIN_APP_TIME .0001  //amount of time reserved for appending an answer into a file (to prevent any partially written answers)
 
 class Region
 {

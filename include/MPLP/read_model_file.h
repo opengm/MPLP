@@ -11,8 +11,8 @@
 
 namespace mplpLib {
 
-#define eps 1e-40
-#define huge 1e40
+#define MPLP_eps 1e-40
+#define MPLP_huge 1e40
 
 int read_model_file(std::vector<int> &, std::vector< std::vector<int> > &, std::vector< std::vector<double> > &, const std::string, const std::string = "");  //at most 1 evidence
 int read_model_file(std::vector<int> &, std::map<int, int> &, std::vector< std::vector<int> > &, std::vector< std::vector<double> > &, const std::string, const std::string);
