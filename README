@@ -1,0 +1,98 @@
+8/8/2012
+
+This code is written by Amir Globerson, David Sontag, Do Kook Choe, & Yitao Li,
+and implements the algorithms described in the following three papers:
+
+  Efficiently Searching for Frustrated Cycles in MAP Inference. 
+  David Sontag, Do Kook Choe, and Yitao Li
+  Uncertainty in Artificial Intelligence (UAI) 28. Catalina Island, United States. 2012.
+
+  Tightening LP Relaxations for MAP using Message Passing
+  David Sontag, Talya Meltzer, Amir Globerson, Tommi Jaakkola and Yair Weiss
+  Uncertainty in Artificial Intelligence (UAI). Helsinki, Finland. 2008. 
+
+  Fixing max-product: Convergent message passing algorithms for MAP LP-relaxations
+  Amir Globerson, Tommi Jaakkola
+  Advances in Neural Information Processing Systems (NIPS) 21. Vancouver, Canada. 2007. 
+
+MPLP is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
+the Free Software Foundation
+
+
+MPLP is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MPLP; see the file gpl.txt.  If not, write to the Free
+Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+02111-1307, USA.
+
+% --------------------------------------------------------------------
+Usage
+
+1) Run 'make'. This will compile the C++ code and create the binary 'solver'.
+
+2) Run the solver as follows:
+
+      ./solver grid4x4.uai grid4x4.uai.evid 234 MPE grid4x4.log
+
+          or simply
+
+      ./solver grid4x4.uai
+
+More details:
+   - 'grid4x4.uai' is the input factor graph in UAI format, described here:
+      http://www.cs.huji.ac.il/project/PASCAL/fileFormat.php
+
+      We support any factor graph on discrete variables, not just pairwise MRFs.
+
+   - 'grid4x4.uai.evid' is the evidence file, also described above (we allow at
+      most one line of evidence). Default is 'no.evid', which is a file with a 
+      single '0' denoting that there are zero lines of evidence.
+
+   - '234' is the random seed. Default is '0'.
+
+   - 'MPE' specifies that this is doing MAP inference (no other option allowed)
+
+   - 'grid4x4.log' is an optional log file that is output, useful for creating
+     plots. The first column is cummulative time in seconds, the second column
+     is the dual objective value, and the third column is the value of the best
+     assignment found so far. We also output the number of triplet clusters
+     added and the amount of time used by the cycle search algorithm.
+
+   You can download several more example UAI files here:
+      http://www.cs.huji.ac.il/project/PASCAL/showExample.php
+
+We made two extensions to the UAI file format:
+ - If input filename ends in UAI.LG, we expect log-potentials.
+
+ - If the number of entries for a factor table is listed as -1, we interpret
+   this factor to be a Potts potential and initialize it to be 0 if x_i = x_j,
+   and the value provided otherwise. The stereo vision files provide an example
+   (see below).
+
+
+% --------------------------------------------------------------------
+Data used in UAI 2012 paper
+
+* Protein side-chain placement (30 files):
+  http://cs.nyu.edu/~dsontag/data/sidechain_uai.tar.gz
+
+  These are the 30 protein side-chain placement instances where the
+  pairwise LP relaxation is not tight, as UAI files.
+
+* Protein protein interaction (8 files):
+  http://cs.nyu.edu/~dsontag/data/ppi_reparam_uai.tar.gz
+
+  The original UAI files for these can be found on the UAI '12 competition
+  website. In our paper we first ran ADLP (Meshi & Globerson, ECML '11) on
+  the pairwise LP relaxation. Here we provide the re-parameterized UAI files,
+  which we used as input to our code.
+
+  The two that we solve exactly are 'protein4' and 'protein8'.
+
+* Stereo vision (4 files):
+  http://cs.nyu.edu/~dsontag/data/stereo_uai.tar.gz
