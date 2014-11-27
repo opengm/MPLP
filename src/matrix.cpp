@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include <MPLP/matrix.h>
 
 using namespace std;
 

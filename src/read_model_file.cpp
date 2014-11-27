@@ -1,4 +1,4 @@
-#include "read_model_file.h"
+#include <MPLP/read_model_file.h>
 
 #define DEBUG_MODE 0
 

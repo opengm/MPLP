@@ -15,7 +15,8 @@
 #include <list>
 #include <map>
 #include <queue>
-#include "mplp_alg.h"
+
+#include <MPLP/mplp_alg.h>
 
 #define DEBUG_MODE 1
 

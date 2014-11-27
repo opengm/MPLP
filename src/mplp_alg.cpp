@@ -8,7 +8,6 @@
  *
  */
 
-#include "mplp_alg.h"
 #include <iostream>
 #include <sstream>
 #include <stdlib.h>
@@ -17,6 +16,8 @@
 #include <list>
 #include <queue>
 #include <stack>
+
+#include <MPLP/mplp_alg.h>
 
 #define DEBUG_MODE 1
 

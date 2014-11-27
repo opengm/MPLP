@@ -18,11 +18,12 @@ using namespace std;
 
 #include <ctime>
 #include <math.h>
-#include "cycle.h" // Most of the logic is in here.
 
 #include <iostream>
 #include <fstream>
 #include <vector>
+
+#include <MPLP/cycle.h> // Most of the logic is in here.
 
 #define MAX_TIGHT_ITERS 1000000 // 100 used for testing
 

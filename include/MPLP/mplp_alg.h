@@ -13,9 +13,9 @@ using namespace std;
 #include <set>
 #include <map>
 
-#include "muldim_arr.h"
+#include <MPLP/muldim_arr.h>
 
-#include "read_model_file.h"
+#include <MPLP/read_model_file.h>
 
 #define MIN_APP_TIME .0001  //amount of time reserved for appending an answer into a file (to prevent any partially written answers)
 

@@ -9,8 +9,9 @@
 using namespace std;
 #include <vector>
 #include <iostream>
-#include "matrix.h"
 #include <string.h> 
+
+#include <MPLP/matrix.h>
 
 #ifndef _MULDIMARR
 #define _MULDIMARR

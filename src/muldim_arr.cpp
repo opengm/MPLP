@@ -7,9 +7,10 @@
  *
  */
 using namespace std;
-#include "muldim_arr.h"
 #include <math.h>
 #include <float.h>
+
+#include <MPLP/muldim_arr.h>
 
 void print_int_vec(vector<int> v){
 	for (int i=0; i<v.size(); ++i){
