@@ -19,6 +19,8 @@
 
 #include <MPLP/mplp_alg.h>
 
+using namespace std;
+
 #define DEBUG_MODE 1
 
 // Gap used within decoding algorithm. TODO: Better algorithm for choosing this (perhaps iteratively).

@@ -6,11 +6,13 @@
  *  Copyright 2008 MIT. All rights reserved.
  *
  */
-using namespace std;
+
 #include <math.h>
 #include <float.h>
 
 #include <MPLP/muldim_arr.h>
+
+using namespace std;
 
 void print_int_vec(vector<int> v){
 	for (int i=0; i<v.size(); ++i){

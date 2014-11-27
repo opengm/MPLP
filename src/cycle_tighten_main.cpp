@@ -13,17 +13,15 @@
  *  We did not use this for the UAI 2012 paper (i.e., we did not set INF_TIME).
  */
 #include <iostream>
-
-using namespace std;
-
 #include <ctime>
 #include <math.h>
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 
 #include <MPLP/cycle.h> // Most of the logic is in here.
+
+using namespace std;
 
 #define MAX_TIGHT_ITERS 1000000 // 100 used for testing
 

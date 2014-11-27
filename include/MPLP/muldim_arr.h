@@ -9,7 +9,6 @@
 #ifndef MPLP_MULDIM_ARR_H
 #define MPLP_MULDIM_ARR_H
 
-using namespace std;
 #include <vector>
 #include <iostream>
 #include <string.h> 
@@ -23,13 +22,13 @@ using namespace std;
 class MulDimArr 
 {
 public:
-	vector<int> m_base_sizes;
+	std::vector<int> m_base_sizes;
 	int m_n_prodsize;
 	double *m_dat;
 	double *m_ep;
 	
 	// Initialize to all zero
-	MulDimArr(vector<int> & base_sizes); 
+	MulDimArr(std::vector<int> & base_sizes);
 	
 	// Copy constructor
 	MulDimArr(const MulDimArr & v);
@@ -54,39 +53,39 @@ public:
 	const double & operator[](int i) const {return m_dat[i];}
 	double Max(int &max_at) const;
 	double Entropy(void) const;
-	double Entropy_over_free_variables(const vector<int> &, const vector<int> &) const;
+	double Entropy_over_free_variables(const std::vector<int> &, const std::vector<int> &) const;
 	void print(void) const;
 	void print_with_inds(void) const;
-	void Write(ofstream & ofs);
-	void Read(ifstream & ifs);
+	void Write(std::ofstream & ofs);
+	void Read(std::ifstream & ifs);
 	
-	inline int GetFlatInd(vector<int> & base_inds) const;
-	inline int GetFlatIndFromBig(vector<int> big_base_inds, vector<int> inds_in_big) const;
-	int GetFlatIndFromBigSpecial(vector<int> & big_base_inds, vector<int> & inds_in_big) const;
+	inline int GetFlatInd(std::vector<int> & base_inds) const;
+	inline int GetFlatIndFromBig(std::vector<int> big_base_inds, std::vector<int> inds_in_big) const;
+	int GetFlatIndFromBigSpecial(std::vector<int> & big_base_inds, std::vector<int> & inds_in_big) const;
 
-	double GetVal(vector<int> & indices) const;
-	MulDimArr Expand(vector<int> & var_sizes_big, vector<int> & inds_in_big);
-	void ExpandAndAdd(MulDimArr & big_to_add_to, vector<int> & inds_of_small_in_big);
-	void ExpandAndSubtract(MulDimArr & big_to_add_to, vector<int> & inds_of_small_in_big);
+	double GetVal(std::vector<int> & indices) const;
+	MulDimArr Expand(std::vector<int> & var_sizes_big, std::vector<int> & inds_in_big);
+	void ExpandAndAdd(MulDimArr & big_to_add_to, std::vector<int> & inds_of_small_in_big);
+	void ExpandAndSubtract(MulDimArr & big_to_add_to, std::vector<int> & inds_of_small_in_big);
 
-	inline void BaseInc(vector<int> & inds) const;
-	inline void BaseIncSpecial(vector<int> & inds) const;
+	inline void BaseInc(std::vector<int> & inds) const;
+	inline void BaseIncSpecial(std::vector<int> & inds) const;
 
-	void GetInds(int, vector<int> &) const;    //for decoding purposes
+	void GetInds(int, std::vector<int> &) const;    //for decoding purposes
 
-	void  max_into_multiple_subsets_special(vector<vector<int> > & all_subset_inds, vector<MulDimArr> & all_maxes) const;
-	double max_over_free_variables(const vector<int> &, vector<int> &) const;
-	double gap_over_free_variables(const vector<int> &, vector<int> &, double &, double &) const;
+	void  max_into_multiple_subsets_special(std::vector<std::vector<int> > & all_subset_inds, std::vector<MulDimArr> & all_maxes) const;
+	double max_over_free_variables(const std::vector<int> &, std::vector<int> &) const;
+	double gap_over_free_variables(const std::vector<int> &, std::vector<int> &, double &, double &) const;
 private:
-	double _max_over_free_variables(int, int, int, int, const vector<int> &, vector<int> &) const;
-	void _Entropy_over_free_variables(int, int, int, int, const vector<int> &, const vector<int> &, double &, double &) const;
+	double _max_over_free_variables(int, int, int, int, const std::vector<int> &, std::vector<int> &) const;
+	void _Entropy_over_free_variables(int, int, int, int, const std::vector<int> &, const std::vector<int> &, double &, double &) const;
 };
 
 // Return the index in the flat multi-dimensional array corresponding to
 // the given multi-index
 // NOTE: Since this function is called to get an intersection index out of a big index,
 // as long as we don't use intersections of more than two, we only need the cases given here.
-inline int MulDimArr::GetFlatIndFromBigSpecial(vector<int> & big_base_inds, vector<int> & inds_in_big) const{
+inline int MulDimArr::GetFlatIndFromBigSpecial(std::vector<int> & big_base_inds, std::vector<int> & inds_in_big) const{
 	int y,ind1,ind2;
 	
 	switch (inds_in_big.size())
@@ -101,13 +100,13 @@ inline int MulDimArr::GetFlatIndFromBigSpecial(vector<int> & big_base_inds, vect
 			y = BASE2DEC_PAIR(big_base_inds[ind1],big_base_inds[ind2],m_base_sizes[0],m_base_sizes[1]);
 			break;
 		default:
-			cout << "GetFlatIndFromBigSpecial problem" << endl;
+		    std::cout << "GetFlatIndFromBigSpecial problem" << std::endl;
 			break;
 	}
 	return y;
 }
 
-inline void MulDimArr::BaseIncSpecial(vector<int> & inds) const{
+inline void MulDimArr::BaseIncSpecial(std::vector<int> & inds) const{
 	switch (inds.size())
 	{
 		case 1:
