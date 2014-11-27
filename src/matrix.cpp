@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <cstring>
+
 #include <MPLP/matrix.h>
 
 using namespace std;
