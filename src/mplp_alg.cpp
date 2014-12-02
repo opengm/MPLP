@@ -589,7 +589,7 @@ double mplpLib::MPLPAlg::UpdateResult(void){
             cout << "int val: " << int_val << endl;
 
         if (time_limit + (double)(start - clock()) / CLOCKS_PER_SEC > MPLP_MIN_APP_TIME){ // Prevent a partial write
-            Write(_res_fname.c_str());
+            Write(/*_res_fname.c_str()*/);
         }
         m_best_decoded_res.assign(m_decoded_res.begin(), m_decoded_res.end());
         m_best_val = int_val;
@@ -602,7 +602,7 @@ double mplpLib::MPLPAlg::UpdateResult(void){
  * TODO: Modify so that this writes a checkpoint, i.e. the full list of intersection sets, regions (not potentials),
  *       and messages, so we can use in debugging and re-running.
  */
-void mplpLib::MPLPAlg::Write(const char *res_fname, const char *msgs_fname, const char *suminto_fname, const char *objhist_fname, const char *inthist_fname, const char *timehist_fname)
+void mplpLib::MPLPAlg::Write(/*const char *res_fname, const char *msgs_fname, const char *suminto_fname, const char *objhist_fname, const char *inthist_fname, const char *timehist_fname*/)
 {
     stringstream s;
 

@@ -337,8 +337,9 @@ MPLPIndexType TightenTriplet(MPLPAlg & mplp, MPLPIndexType nclus_to_add_min, MPL
 
     // Add the top nclus_to_add clusters to the relaxation
     assert(nNewClusters > 0);
-    for(MPLPIndexType clusterId = nNewClusters-1; clusterId >= 0 && nClustersAdded < nclus_to_add_max && (nClustersAdded < nclus_to_add_min || ((newCluster[clusterId].bound >= newCluster[nNewClusters-1].bound/5) && newCluster[clusterId].bound >= MPLP_CLUSTER_THR)) ; clusterId--)
+    for(MPLPIndexType iter = nNewClusters; iter > 0 && nClustersAdded < nclus_to_add_max && (nClustersAdded < nclus_to_add_min || ((newCluster[iter - 1].bound >= newCluster[nNewClusters-1].bound/5) && newCluster[iter - 1].bound >= MPLP_CLUSTER_THR)) ; iter--)
     {
+        const MPLPIndexType clusterId = iter - 1;
         // Check to see if this triplet is already being used
         std::vector<MPLPIndexType> temp;
         temp.push_back(newCluster[clusterId].i);
@@ -393,7 +394,7 @@ bool edge_sorting3(std::pair<std::pair<MPLPIndexType, MPLPIndexType>, double> i,
 }
 
 // De-allocate memory relating to the projection graph (TODO: finish writing this)
-void delete_projection_graph(MPLPIndexType num_vars, std::vector<std::vector<MPLPIndexType> > &projection_map, std::vector<MPLPIndexType> &projection_imap_var, adj_type &projection_adjacency_list, double* &array_of_sij) {
+void delete_projection_graph(/*MPLPIndexType num_vars, std::vector<std::vector<MPLPIndexType> > &projection_map, std::vector<MPLPIndexType> &projection_imap_var, adj_type &projection_adjacency_list,*/ double* &array_of_sij) {
 
     //for(MPLPIndexType node=0; node < num_vars; node++)
     //  delete []projection_map[node];
@@ -450,11 +451,11 @@ double find_smn(const std::vector<MPLPIndexType>& partition_i, MPLPIndexType var
 }
 
 // Compute a single edge weight in the projection graph (more efficiently)
-double find_smn_state_i(MPLPIndexType single_i, MPLPIndexType var_i_size, const std::vector<MPLPIndexType>& partition_j, MPLPIndexType var_j_size, MulDimArr* edge_belief, std::vector<std::vector<double> >& max_i_bij_not_xi) {
+double find_smn_state_i(MPLPIndexType single_i, /*MPLPIndexType var_i_size,*/ const std::vector<MPLPIndexType>& partition_j, MPLPIndexType var_j_size, MulDimArr* edge_belief, std::vector<std::vector<double> >& max_i_bij_not_xi) {
     double max, sec_max;
     max = sec_max = -MPLP_Inf;
     //double whole_i[var_i_size];
-    double whole_j[var_j_size];
+    std::vector<double> whole_j(var_j_size);
     /*for (MPLPIndexType i = 0; i < var_i_size; i++) {
         whole_i[i] = 0;
     }*/
@@ -488,10 +489,10 @@ double find_smn_state_i(MPLPIndexType single_i, MPLPIndexType var_i_size, const 
 }
 
 // Compute a single edge weight in the projection graph (more efficiently)
-double find_smn_state_j(const std::vector<MPLPIndexType>& partition_i, MPLPIndexType var_i_size, MPLPIndexType single_j, MPLPIndexType var_j_size, MulDimArr* edge_belief, std::vector<std::vector<double> >& max_j_bij_not_xj) {
+double find_smn_state_j(const std::vector<MPLPIndexType>& partition_i, MPLPIndexType var_i_size, MPLPIndexType single_j, /*MPLPIndexType var_j_size,*/ MulDimArr* edge_belief, std::vector<std::vector<double> >& max_j_bij_not_xj) {
     double max, sec_max;
     max = sec_max = -MPLP_Inf;
-    double whole_i[var_i_size];
+    std::vector<double> whole_i(var_i_size);
     //double whole_j[var_j_size];
     for (MPLPIndexType i = 0; i < var_i_size; i++) {
         whole_i[i] = 0;
@@ -723,7 +724,7 @@ MPLPIndexType create_expanded_projection_graph(MPLPAlg& mplp, std::vector<MPLPIn
         clock_t find_partition_end_time = clock();
         double find_partition_total_time = (double)(find_partition_end_time - find_partition_start_time)/CLOCKS_PER_SEC;
         if (MPLP_DEBUG_MODE) {
-            printf(" -- find_partition. Took %lg seconds\n", find_partition_total_time);
+            std::cout << " -- find_partition. Took " << find_partition_total_time << " seconds" << std::endl;
         }
     }
 
@@ -836,7 +837,7 @@ MPLPIndexType create_expanded_projection_graph(MPLPAlg& mplp, std::vector<MPLPIn
 
 
         // decompose: max_{x_j!=x_j}max_{x_i != x_i'}. Then, use the above computations.
-        double max_ij_bij_not_xi_xj[mplp.m_var_sizes[i]][mplp.m_var_sizes[j]];
+        std::vector<std::vector<double> > max_ij_bij_not_xi_xj(mplp.m_var_sizes[i],std::vector<double>(mplp.m_var_sizes[j]));
         for(MPLPIndexType state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
             // Find max over state2
@@ -885,11 +886,11 @@ MPLPIndexType create_expanded_projection_graph(MPLPAlg& mplp, std::vector<MPLPIn
                 }
                 else if (it_i->first.size() == 1) {
                     MPLPIndexType xi = it_i->first[0];
-                    smn = find_smn_state_i(xi, mplp.m_var_sizes[i], it_j->first, mplp.m_var_sizes[j], edge_belief, max_i_bij_not_xi);
+                    smn = find_smn_state_i(xi, /*mplp.m_var_sizes[i],*/ it_j->first, mplp.m_var_sizes[j], edge_belief, max_i_bij_not_xi);
                 }
                 else if (it_j->first.size() == 1) {
                     MPLPIndexType xj = it_j->first[0];
-                    smn = find_smn_state_j(it_i->first, mplp.m_var_sizes[i], xj, mplp.m_var_sizes[j], edge_belief, max_j_bij_not_xj);
+                    smn = find_smn_state_j(it_i->first, mplp.m_var_sizes[i], xj, /*mplp.m_var_sizes[j],*/ edge_belief, max_j_bij_not_xj);
                 }
                 else {
                     // This computes smn
@@ -912,7 +913,7 @@ MPLPIndexType create_expanded_projection_graph(MPLPAlg& mplp, std::vector<MPLPIn
     clock_t find_smn_end_time = clock();
     double find_smn_total_time = (double)(find_smn_end_time - find_smn_start_time)/CLOCKS_PER_SEC;
     if (MPLP_DEBUG_MODE) {
-        printf(" -- find_smn. Took %lg seconds\n", find_smn_total_time);
+        std::cout << " -- find_smn. Took " << find_smn_total_time << " seconds" << std::endl;
     }
 
     array_of_sij = new double[set_of_sij.size()];
@@ -980,8 +981,8 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<MPLPIndexT
             continue;
 
         // Do some pre-processing for speed.
-        double max_j_bij_not_xj[mplp.m_var_sizes[i]][mplp.m_var_sizes[j]];
-        double max_i_bij_not_xi[mplp.m_var_sizes[i]][mplp.m_var_sizes[j]];
+        std::vector<std::vector<double> > max_j_bij_not_xj(mplp.m_var_sizes[i], std::vector<double>(mplp.m_var_sizes[j]));
+        std::vector<std::vector<double> > max_i_bij_not_xi(mplp.m_var_sizes[i], std::vector<double>(mplp.m_var_sizes[j]));
 
         for(MPLPIndexType state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
@@ -1053,7 +1054,7 @@ void create_k_projection_graph(MPLPAlg& mplp, std::vector<std::vector<MPLPIndexT
         }
 
         // decompose: max_{x_j!=x_j}max_{x_i != x_i'}. Then, use the above computations.
-        double max_ij_bij_not_xi_xj[mplp.m_var_sizes[i]][mplp.m_var_sizes[j]];
+        std::vector<std::vector<double> > max_ij_bij_not_xi_xj(mplp.m_var_sizes[i], std::vector<double>(mplp.m_var_sizes[j]));
         for(MPLPIndexType state1=0; state1 < mplp.m_var_sizes[i]; state1++) {
 
             // Find max over state2
@@ -1144,7 +1145,7 @@ double find_optimal_R(adj_type &projection_adjacency_list, double* &array_of_sij
         // Initialize
         // TODO: do not allocate memory for this every time! Just re-initialize.
 
-        int node_sign[num_projection_nodes];
+        std::vector<int> node_sign(num_projection_nodes);
         for(MPLPIndexType m=0; m<num_projection_nodes; m++) {
             node_sign[m] = 0; // denotes "not yet seen"
         }
@@ -1307,7 +1308,7 @@ void FindCycles(std::vector<std::list<MPLPIndexType> > &cycle_set, double optima
                     assert(temp_di > 0);
                     temp_di--;
                 }
-                while (temp_di >= 0) {
+                while (true) {
                     if (anc_i == anc_j) { //least common ancestor found
                         std::list<MPLPIndexType> temp;
                         temp.push_back(i);
@@ -1323,6 +1324,9 @@ void FindCycles(std::vector<std::list<MPLPIndexType> > &cycle_set, double optima
                     }
                     anc_i = node_parent[anc_i];
                     anc_j = node_parent[anc_j];
+                    if(temp_di == 0) {
+                        break;
+                    }
                     assert(temp_di > 0);
                     temp_di--;
                     assert(temp_dj > 0);
@@ -1393,11 +1397,11 @@ void FindCycles(std::vector<std::list<MPLPIndexType> > &cycle_set, double optima
 
 // Check to see if there are any duplicate variables, and, if so, shortcut
 // NOTE: this is not currently being used.
-void shortcut(std::list<MPLPIndexType> &cycle, std::vector<MPLPIndexType> &projection_imap_var, std::map<std::pair<MPLPIndexType, MPLPIndexType>, double>& projection_edge_weights, MPLPIndexType& num_projection_nodes) {
+void shortcut(std::list<MPLPIndexType> &cycle, std::vector<MPLPIndexType> &projection_imap_var, std::map<std::pair<MPLPIndexType, MPLPIndexType>, double>& projection_edge_weights/*, MPLPIndexType& num_projection_nodes*/) {
 
     bool exist_duplicates = true;
-    MPLPIndexType cycle_array[cycle.size()]; MPLPIndexType tmp_ind = 0;
-    int cycle_sign[cycle.size()];
+    std::vector<MPLPIndexType> cycle_array(cycle.size()); MPLPIndexType tmp_ind = 0;
+    std::vector<int> cycle_sign(cycle.size());
 
     for (std::list<MPLPIndexType>::iterator it=cycle.begin(); it!=cycle.end(); ++it) {
         cycle_array[tmp_ind++] = *it;
@@ -1472,18 +1476,18 @@ void shortcut(std::list<MPLPIndexType> &cycle, std::vector<MPLPIndexType> &proje
 }
 
 
-MPLPIndexType add_cycle(MPLPAlg& mplp, std::list<MPLPIndexType> &cycle, std::vector<MPLPIndexType> &projection_imap_var, std::map<std::vector<MPLPIndexType>, bool >& triplet_set, MPLPIndexType& num_projection_nodes) {
+MPLPIndexType add_cycle(MPLPAlg& mplp, std::list<MPLPIndexType> &cycle, std::vector<MPLPIndexType> &projection_imap_var, std::map<std::vector<MPLPIndexType>, bool >& triplet_set/*, MPLPIndexType& num_projection_nodes*/) {
 
     MPLPIndexType nClustersAdded = 0;
 
     // Number of clusters we're adding is length_cycle - 2
     assert(cycle.size() > 1);
     MPLPIndexType nNewClusters = cycle.size() - 2;
-    TripletCluster newCluster[nNewClusters];
+    std::vector<TripletCluster> newCluster(nNewClusters);
     MPLPIndexType cluster_index = 0;
 
     // Convert cycle to array
-    MPLPIndexType cycle_array[cycle.size()]; MPLPIndexType tmp_ind = 0;
+    std::vector<MPLPIndexType> cycle_array(cycle.size()); MPLPIndexType tmp_ind = 0;
     for (std::list<MPLPIndexType>::iterator it=cycle.begin(); it!=cycle.end(); ++it) { // this is unnecesary
         //    if (MPLP_DEBUG_MODE) {
         //      if (*it >= num_projection_nodes) {
@@ -1646,7 +1650,7 @@ MPLPIndexType TightenCycle(MPLPAlg & mplp, MPLPIndexType nclus_to_add,  std::map
     clock_t end_time = clock();
     double total_time = (double)(end_time - start_time)/CLOCKS_PER_SEC;
     if (MPLP_DEBUG_MODE) {
-        printf(" -- FindCycles. Took %lg seconds\n", total_time);
+        std::cout << " -- FindCycles. Took " << total_time << " seconds" << std::endl;
     } 
 
 
@@ -1671,16 +1675,16 @@ MPLPIndexType TightenCycle(MPLPAlg & mplp, MPLPIndexType nclus_to_add,  std::map
         }
 
         // Add cycle to the relaxation
-        nClustersAdded += add_cycle(mplp, cycle_set[z], projection_imap_var, triplet_set, num_projection_nodes);
+        nClustersAdded += add_cycle(mplp, cycle_set[z], projection_imap_var, triplet_set/*, num_projection_nodes*/);
     }
 
     end_time = clock();
     total_time = (double)(end_time - start_time)/CLOCKS_PER_SEC;
     if (MPLP_DEBUG_MODE) {
-        printf(" -- shortcut + add_cycles. Took %lg seconds\n", total_time);
+        std::cout << " -- shortcut + add_cycles. Took " << total_time << " seconds" << std::endl;
     }
 
-    delete_projection_graph(mplp.m_var_sizes.size(), projection_map, projection_imap_var, projection_adjacency_list, array_of_sij);
+    delete_projection_graph(/*mplp.m_var_sizes.size(), projection_map, projection_imap_var, projection_adjacency_list,*/ array_of_sij);
     return nClustersAdded;
 }
 

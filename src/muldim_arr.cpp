@@ -35,7 +35,7 @@ mplpLib::MulDimArr::MulDimArr(vector<MPLPIndexType> & base_sizes)
         m_dat[i] = 0.0;
 
     m_ep = &m_dat[m_n_prodsize];	
-};
+}
 
 mplpLib::MulDimArr::MulDimArr(const MulDimArr & v)
 {
@@ -93,9 +93,9 @@ inline mplpLib::MPLPIndexType mplpLib::MulDimArr::GetFlatInd(vector<MPLPIndexTyp
     MPLPIndexType nx = m_base_sizes.size();
 
     assert(nx > 0);
-    for (MPLPIndexType i=nx-1;i>=0; i--) {
-        y += base_inds[i]*fact;
-        fact*= m_base_sizes[i];
+    for (MPLPIndexType i=nx;i>0; i--) {
+        y += base_inds[i-1]*fact;
+        fact*= m_base_sizes[i-1];
     }
     return y;
 }
@@ -118,9 +118,9 @@ inline mplpLib::MPLPIndexType mplpLib::MulDimArr::GetFlatIndFromBig(vector<MPLPI
     MPLPIndexType nx = m_base_sizes.size();
 
     assert(nx > 0);
-    for (MPLPIndexType i=nx-1;i>=0; i--) {
-        y += big_base_inds[inds_in_big[i]]*fact;
-        fact*= m_base_sizes[i];
+    for (MPLPIndexType i=nx;i>0; i--) {
+        y += big_base_inds[inds_in_big[i-1]]*fact;
+        fact*= m_base_sizes[i-1];
     }
     return y;
 }

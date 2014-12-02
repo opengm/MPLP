@@ -107,7 +107,7 @@ int main( int argc, char *argv[] ){
     }
 
     if(LOG_MODE) {
-        fprintf(log_file, "I niter=%lu, niter_later=%lu, nclus_to_add_min=%lu, nclus_to_add_max=%lu, obj_del_thr=%lg, int_gap_thr=%lg\n", niter, niter_later, nclus_to_add_min, nclus_to_add_max, obj_del_thr,int_gap_thr);
+        fprintf(log_file, "I niter=%lu, niter_later=%lu, nclus_to_add_min=%lu, nclus_to_add_max=%lu, obj_del_thr=%g, int_gap_thr=%g\n", niter, niter_later, nclus_to_add_min, nclus_to_add_max, obj_del_thr,int_gap_thr);
     }
     if (MPLP_DEBUG_MODE) cout << "niter=" << niter << "\nniter_later=" << niter_later << "\nnclus_to_add=" << nclus_to_add_min << "\nobj_del_thr=" << obj_del_thr << "\nint_gap_thr=" << int_gap_thr << endl;
 
@@ -124,7 +124,7 @@ int main( int argc, char *argv[] ){
         // Is problem solved? If so, break.
         double int_gap = mplp.last_obj - mplp.m_best_val;
         if(int_gap < int_gap_thr){
-            if (MPLP_DEBUG_MODE) printf("Done! Integrality gap less than %lg\n", int_gap_thr);
+            if (MPLP_DEBUG_MODE) cout << "Done! Integrality gap less than " << int_gap_thr << endl;
             break;
         }
 
@@ -180,7 +180,7 @@ int main( int argc, char *argv[] ){
             cout << " -- Added " << nClustersAdded << " clusters to relaxation. Took " << tightening_total_time << " seconds" << endl;
         }
         if(LOG_MODE) {
-            fprintf(log_file, "I added %lu clusters. Took %lg seconds\n", nClustersAdded, tightening_total_time);
+            fprintf(log_file, "I added %lu clusters. Took %g seconds\n", nClustersAdded, tightening_total_time);
         }
 
         // For CSP instances, 2/3 through run time, start decimation -- OR, when no progress being made

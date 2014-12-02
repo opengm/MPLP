@@ -133,7 +133,7 @@ public:
     // Returns -1 if not found.
     int FindIntersectionSet(std::vector<MPLPIndexType> & inds_of_vars);
 
-    void Write(const char *res_fname, const char *msgs_fname = "msgs.txt", const char *suminto_fname = "suminto.txt", const char *objhist_fname = "objhist.txt", const char *inthist_fname = "inthist.txt", const char *timehist_fname = "timehist.txt");
+    void Write(/*const char *res_fname, const char *msgs_fname = "msgs.txt", const char *suminto_fname = "suminto.txt", const char *objhist_fname = "objhist.txt", const char *inthist_fname = "inthist.txt", const char *timehist_fname = "timehist.txt"*/);
 private:
     std::string _res_fname;
     std::ofstream _ofs_res;

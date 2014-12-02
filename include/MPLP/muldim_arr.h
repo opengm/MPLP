@@ -139,11 +139,11 @@ inline void MulDimArr::BaseIncSpecial(std::vector<MPLPIndexType> & inds) const{
         break;
     default:
         assert(inds.size() > 0);
-        for(MPLPIndexType i=inds.size()-1; i >= 0; i--) {
-            inds[i]++;
-            if(inds[i] < m_base_sizes[i])
+        for(MPLPIndexType i=inds.size(); i > 0; i--) {
+            inds[i - 1]++;
+            if(inds[i - 1] < m_base_sizes[i])
                 break;
-            inds[i]=0;
+            inds[i - 1]=0;
         }
     }
 }
