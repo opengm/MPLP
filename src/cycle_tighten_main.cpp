@@ -29,7 +29,7 @@ using namespace mplpLib;
 int main( int argc, char *argv[] ){
     // Note: MPLP_DEBUG_MODE flag can be found in "cycle.h"
     // DEFAULT values:
-    int niter = 1000, niter_later = 20, nclus_to_add_min = 5, nclus_to_add_max = 20;
+    MPLPIndexType niter = 1000, niter_later = 20, nclus_to_add_min = 5, nclus_to_add_max = 20;
     double obj_del_thr = .0002, int_gap_thr = .0002;
     bool UAIsettings = false;  // Settings for UAI inference competition override all others
 
@@ -71,7 +71,7 @@ int main( int argc, char *argv[] ){
     bool prevGlobalDecodingWas1 = true;
 
     // Keep track of triplets added so far
-    map<vector<int>, bool> triplet_set;
+    map<vector<MPLPIndexType>, bool> triplet_set;
 
     /*      // We probably do not need to worry about memory limit yet?
 	char *m = getenv("INF_MEMORY");
@@ -87,9 +87,9 @@ int main( int argc, char *argv[] ){
     else
         evidence_file = "no.evid"; // default if not provided as input
 
-    int seed;
+    unsigned int seed;
     if(argc > 2)
-        sscanf(argv[3],"%d",&seed);
+        sscanf(argv[3],"%u",&seed);
     else seed = 0; // default if not provided as input
 
     if(MPLP_DEBUG_MODE) cout << "Random seed = " << seed << endl;
@@ -107,19 +107,19 @@ int main( int argc, char *argv[] ){
     }
 
     if(LOG_MODE) {
-        fprintf(log_file, "I niter=%d, niter_later=%d, nclus_to_add_min=%d, nclus_to_add_max=%d, obj_del_thr=%lg, int_gap_thr=%lg\n", niter, niter_later, nclus_to_add_min, nclus_to_add_max, obj_del_thr,int_gap_thr);
+        fprintf(log_file, "I niter=%lu, niter_later=%lu, nclus_to_add_min=%lu, nclus_to_add_max=%lu, obj_del_thr=%lg, int_gap_thr=%lg\n", niter, niter_later, nclus_to_add_min, nclus_to_add_max, obj_del_thr,int_gap_thr);
     }
-    if (MPLP_DEBUG_MODE) printf("niter=%d\nniter_later=%d\nnclus_to_add=%d\nobj_del_thr=%lg\nint_gap_thr=%lg\n",niter, niter_later, nclus_to_add_min,obj_del_thr,int_gap_thr);
+    if (MPLP_DEBUG_MODE) cout << "niter=" << niter << "\nniter_later=" << niter_later << "\nnclus_to_add=" << nclus_to_add_min << "\nobj_del_thr=" << obj_del_thr << "\nint_gap_thr=" << int_gap_thr << endl;
 
     // Load in the MRF and initialize GMPLP state
     MPLPAlg mplp(start, time_limit, input_file, evidence_file, log_file, lookForCSPs);
 
-    if (MPLP_DEBUG_MODE) printf("Initially running MPLP for %d iterations\n", niter);
+    if (MPLP_DEBUG_MODE) cout << "Initially running MPLP for " << niter << " iterations" << endl;
     mplp.RunMPLP(niter, obj_del_thr, int_gap_thr);
 
-    for(int iter=1; iter<MPLP_MAX_TIGHT_ITERS; iter++){  // Break when problem is solved
+    for(MPLPIndexType iter=1; iter<MPLP_MAX_TIGHT_ITERS; iter++){  // Break when problem is solved
         if(LOG_MODE) fflush(log_file);
-        if (MPLP_DEBUG_MODE) printf("\n\nOuter loop iteration %d\n----------------------\n", iter);
+        if (MPLP_DEBUG_MODE) cout << "\n\nOuter loop iteration "<< iter << "\n----------------------" << endl;
 
         // Is problem solved? If so, break.
         double int_gap = mplp.last_obj - mplp.m_best_val;
@@ -132,9 +132,9 @@ int main( int argc, char *argv[] ){
         // more time to run till convergence
 
         if(int_gap < 1){
-            niter_later = max(niter_later, 600);  // TODO opt: don't hard code
+            niter_later = max(niter_later, MPLPIndexType(600));  // TODO opt: don't hard code
             obj_del_thr = min(obj_del_thr, 1e-5);
-            if (MPLP_DEBUG_MODE) printf("Int gap small, so setting niter_later to %d and obj_del_thr to %lg\n", niter_later, obj_del_thr);
+            if (MPLP_DEBUG_MODE) cout << "Int gap small, so setting niter_later to " << niter_later << " and obj_del_thr to " << obj_del_thr << endl;
         }
 
         // Keep track of global decoding time and run this frequently, but at most 20% of total runtime
@@ -155,7 +155,7 @@ int main( int argc, char *argv[] ){
 
         clock_t tightening_start_time = clock();
         double bound=0; double bound2 = 0;
-        int nClustersAdded = 0;
+        MPLPIndexType nClustersAdded = 0;
 
         nClustersAdded += TightenTriplet(mplp, nclus_to_add_min, nclus_to_add_max, triplet_set, bound);
         nClustersAdded += TightenCycle(mplp, nclus_to_add_min, triplet_set, bound2, 1);
@@ -177,10 +177,10 @@ int main( int argc, char *argv[] ){
         clock_t tightening_end_time = clock();
         double tightening_total_time = (double)(tightening_end_time - tightening_start_time)/CLOCKS_PER_SEC;
         if (MPLP_DEBUG_MODE) {
-            printf(" -- Added %d clusters to relaxation. Took %lg seconds\n", nClustersAdded, tightening_total_time);
+            cout << " -- Added " << nClustersAdded << " clusters to relaxation. Took " << tightening_total_time << " seconds" << endl;
         }
         if(LOG_MODE) {
-            fprintf(log_file, "I added %d clusters. Took %lg seconds\n", nClustersAdded, tightening_total_time);
+            fprintf(log_file, "I added %lu clusters. Took %lg seconds\n", nClustersAdded, tightening_total_time);
         }
 
         // For CSP instances, 2/3 through run time, start decimation -- OR, when no progress being made
@@ -217,7 +217,7 @@ int main( int argc, char *argv[] ){
             }
         }
 
-        if (MPLP_DEBUG_MODE) printf("Running MPLP again for %d more iterations\n", niter_later);
+        if (MPLP_DEBUG_MODE) cout << "Running MPLP again for " << niter_later << " more iterations" << endl;
         mplp.RunMPLP(niter_later, obj_del_thr, int_gap_thr);
 
         if(UAIsettings) {

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <MPLP/mplp_config.h>
+
 namespace mplpLib {
 
 class Matrix;
@@ -11,10 +13,10 @@ class Matrix;
 class Vec
 {
 public:
-    int m_size;
+    MPLPIndexType m_size;
     double *m_dat;
     double *m_ep;
-    Vec(int size)
+    Vec(MPLPIndexType size)
     {
         m_size = size;
         if (size==0) return;
@@ -22,8 +24,8 @@ public:
         m_ep = &m_dat[size];
     }
     ~Vec();
-    inline int size() {return m_size;}
-    double & operator[](int i) {return m_dat[i];}
+    inline MPLPIndexType size() {return m_size;}
+    double & operator[](MPLPIndexType i) {return m_dat[i];}
     Vec & operator=(double val);
     Vec & operator=(Vec & v);
     Vec & operator*=(double val);
@@ -45,7 +47,7 @@ public:
   Vec & Exp();*/
     /*  double KL_Dist(Vec & v);*/
     Vec & Inv();
-    void SetSize(int n);
+    void SetSize(MPLPIndexType n);
     void Rand();
     void Read(char *fname);
     void Write(char *fname);
@@ -56,19 +58,19 @@ public:
 class Matrix
 {
 public:
-    int m_nrows;
-    int m_ncols;
+    MPLPIndexType m_nrows;
+    MPLPIndexType m_ncols;
     bool m_bDelete;
     double *m_raw_dat;
     double *m_ep;
     double **m_rows;
-    Matrix(int rows =0,  int cols = 0);
-    Matrix(int rows, int cols,double *p_dat);
+    Matrix(MPLPIndexType rows =0,  MPLPIndexType cols = 0);
+    Matrix(MPLPIndexType rows, MPLPIndexType cols,double *p_dat);
     ~Matrix();
-    void SetSize(int rows, int cols);
-    inline int nrows() {return m_nrows;}
-    inline int ncols() {return m_ncols;}
-    inline double & operator()(int r,int c) {return m_rows[r][c];}
+    void SetSize(MPLPIndexType rows, MPLPIndexType cols);
+    inline MPLPIndexType nrows() {return m_nrows;}
+    inline MPLPIndexType ncols() {return m_ncols;}
+    inline double & operator()(MPLPIndexType r,MPLPIndexType c) {return m_rows[r][c];}
     Matrix & BackDiv(Matrix &m);
     Matrix & operator+=(Matrix &m);
     Matrix & operator-=(Matrix &m);
@@ -87,15 +89,15 @@ public:
     /*  double KL_Dist(Matrix & p);
   void Log();*/
     double Sum();
-    double *GetRow(int i) {return m_rows[i];}
-    void GetCol(int i, Vec &v);
-    void GetRow(int i, Vec &v);
-    void SetRow(int i, Vec & v);
-    double SumRow(int i);
-    double SumCol(int i);
+    double *GetRow(MPLPIndexType i) {return m_rows[i];}
+    void GetCol(MPLPIndexType i, Vec &v);
+    void GetRow(MPLPIndexType i, Vec &v);
+    void SetRow(MPLPIndexType i, Vec & v);
+    double SumRow(MPLPIndexType i);
+    double SumCol(MPLPIndexType i);
     void SumRows(Vec &v);
     void SumCols(Vec & v);
-    void ScaleRow(int i,double s);
+    void ScaleRow(MPLPIndexType i,double s);
     // Scale the i'th row by v[i]
     Matrix & ScaleRowsByVec(Vec &v);
     Matrix & DivRowsByVec(Vec &v);
@@ -107,21 +109,21 @@ class SparseMatrix
 {
 public:
     double *m_dat;
-    int *m_rind;
-    int *m_cind;
-    int m_nrows;
-    int m_ncols;
-    int m_nelem;
+    MPLPIndexType *m_rind;
+    MPLPIndexType *m_cind;
+    MPLPIndexType m_nrows;
+    MPLPIndexType m_ncols;
+    MPLPIndexType m_nelem;
     double m_thr;
 
-    double GetElem(int i, int & row, int & col) {row=m_rind[i]; col=m_cind[i]; return m_dat[i];}
+    double GetElem(MPLPIndexType i, MPLPIndexType & row, MPLPIndexType & col) {row=m_rind[i]; col=m_cind[i]; return m_dat[i];}
     //	double KL_Dist(Matrix &p);
     void Read(char *fname, double thr);
-    double SumRow(int i);
-    double SumCol(int i);
+    double SumRow(MPLPIndexType i);
+    double SumCol(MPLPIndexType i);
 };
 
-inline double dot(double *a, double *b, int n)
+inline double dot(double *a, double *b, MPLPIndexType n)
 {
     double s=0;
     double *ap,*bp;
@@ -136,12 +138,12 @@ void mult_trans2(Matrix & A, Matrix & B, Matrix & C);
 void mult_trans3(Matrix & A, Matrix & B, Matrix & C);
 void CalcModel(Matrix & phis, Matrix & psis, Vec & a, Vec &b, Matrix & Model);
 void CalcModelTrans(Matrix & phis, Matrix & psis, Vec & a, Vec &b, Matrix & Model);
-void MatMaxEnt( Matrix & f_val, Matrix & f_exp, Matrix & p_proj, int ep, Matrix & lambdas, Vec & zs);
-void ConjGradMaxEnt( Matrix & f_val, Matrix & f_exp, Matrix & p_proj, int ep, Matrix & lambdas, Vec & zs);
+void MatMaxEnt( Matrix & f_val, Matrix & f_exp, Matrix & p_proj, MPLPIndexType ep, Matrix & lambdas, Vec & zs);
+void ConjGradMaxEnt( Matrix & f_val, Matrix & f_exp, Matrix & p_proj, MPLPIndexType ep, Matrix & lambdas, Vec & zs);
 void MakeCondDistX(Matrix & pygx, Vec & px);
-void VecMaxEnt( Matrix & f_val, Matrix & f_exp, Vec & p0, int ep, Matrix & lambdas, Vec & zs, bool brows, double maxentthr);
-double dot(double *a, double *b, int n);
-void ConjGradMaxEntVec( Matrix & f_val, Matrix & ref_p, Matrix & p_proj, int ep, Matrix & lambdas, Vec & zs, bool brow);
+void VecMaxEnt( Matrix & f_val, Matrix & f_exp, Vec & p0, MPLPIndexType ep, Matrix & lambdas, Vec & zs, bool brows, double maxentthr);
+double dot(double *a, double *b, MPLPIndexType n);
+void ConjGradMaxEntVec( Matrix & f_val, Matrix & ref_p, Matrix & p_proj, MPLPIndexType ep, Matrix & lambdas, Vec & zs, bool brow);
 
 } // namespace mplpLib
 

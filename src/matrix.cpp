@@ -28,7 +28,7 @@ mplpLib::Vec & mplpLib::Vec::operator=(Vec & v)
 void mplpLib::Vec::Read(char *fname)
 {
     ifstream ifs(fname);
-    int s;
+    MPLPIndexType s;
 
     ifs >> s;
     if (m_dat)
@@ -36,7 +36,7 @@ void mplpLib::Vec::Read(char *fname)
     m_size = s;
     m_dat= new double[m_size];
     m_ep = &m_dat[m_size];
-    for (int i=0; i< s; i++)
+    for (MPLPIndexType i=0; i< s; i++)
         ifs >> m_dat[i];
 }
 
@@ -45,11 +45,11 @@ void mplpLib::Vec::Write(char *fname)
     ofstream ofs(fname);
 
     ofs << size() << endl;
-    for (int i=0; i< size(); i++)
+    for (MPLPIndexType i=0; i< size(); i++)
         ofs << m_dat[i] << " ";
 }
 
-void mplpLib::Vec::SetSize(int n)
+void mplpLib::Vec::SetSize(MPLPIndexType n)
 {
     if (m_dat)
         delete [] m_dat;
@@ -60,14 +60,14 @@ void mplpLib::Vec::SetSize(int n)
 
 void mplpLib::Vec::Rand()
 {
-    for (int i=0; i< size(); i++)
+    for (MPLPIndexType i=0; i< size(); i++)
         m_dat[i]=(double) 2.0*rand()/RAND_MAX -1;
 }
 
 double mplpLib::Vec::Max()
 {
     double m = m_dat[0];
-    for (int i=1;i<size(); i++) {
+    for (MPLPIndexType i=1;i<size(); i++) {
         if (m_dat[i]>m)
             m=m_dat[i];
     }
@@ -77,7 +77,7 @@ double mplpLib::Vec::Max()
 double mplpLib::Vec::Min()
 {
     double m = m_dat[0];
-    for (int i=1;i<size(); i++) {
+    for (MPLPIndexType i=1;i<size(); i++) {
         if (m_dat[i]<m)
             m=m_dat[i];
     }
@@ -88,7 +88,7 @@ void mplpLib::Vec::MaxMin(double &mx, double &mn)
 {
     mx = m_dat[0];
     mn = mx;
-    for (int i=1;i<size(); i++)
+    for (MPLPIndexType i=1;i<size(); i++)
     {
         if (m_dat[i]>mx)
             mx=m_dat[i];
@@ -108,7 +108,7 @@ double mplpLib::Vec::Sum()
 
 void mplpLib::Vec::Print()
 {
-    for (int i=0;i<size(); i++)
+    for (MPLPIndexType i=0;i<size(); i++)
         cout << m_dat[i] << " ";
     cout << endl;
 }
@@ -207,11 +207,11 @@ void mplpLib::Vec::MatMult(Matrix & m, Vec & v)
 {
     double *pv;
     double **mrows = m.m_rows;
-    for (int i=0; i<m.m_ncols; i++)
+    for (MPLPIndexType i=0; i<m.m_ncols; i++)
     {
         double sum=0;
         pv = m_dat;
-        for (int j=0; j<m.m_nrows; j++,pv++)
+        for (MPLPIndexType j=0; j<m.m_nrows; j++,pv++)
             sum+=(*pv)*mrows[j][i];
         //	sum+=(*pv)*m(j,i);
         v[i]=sum;
@@ -232,12 +232,12 @@ double Vec::KL_Dist(Vec & v)
 }
  */
 
-mplpLib::Matrix::Matrix(int rows, int cols) : m_nrows(rows), m_ncols(cols),m_bDelete(true)
+mplpLib::Matrix::Matrix(MPLPIndexType rows, MPLPIndexType cols) : m_nrows(rows), m_ncols(cols),m_bDelete(true)
 {
     m_raw_dat = new double[rows*cols];
     m_rows = new double*[rows];
     m_ep = &m_raw_dat[rows*cols];
-    for (int i=0; i<rows; i++)
+    for (MPLPIndexType i=0; i<rows; i++)
         m_rows[i]=&m_raw_dat[i*cols];
 }
 
@@ -249,17 +249,17 @@ mplpLib::Matrix::~Matrix()
 
 }
 
-mplpLib::Matrix::Matrix(int rows, int cols,double *p_dat)  :  m_nrows(rows), m_ncols(cols),m_bDelete(false)
+mplpLib::Matrix::Matrix(MPLPIndexType rows, MPLPIndexType cols,double *p_dat)  :  m_nrows(rows), m_ncols(cols),m_bDelete(false)
 {
     m_raw_dat=p_dat;
     m_rows = new double*[rows];
     m_ep = &m_raw_dat[rows*cols];
-    for (int i=0; i<rows; i++)
+    for (MPLPIndexType i=0; i<rows; i++)
         m_rows[i]=&m_raw_dat[i*cols];
 
 }
 
-void mplpLib::Matrix::SetSize(int rows, int cols)
+void mplpLib::Matrix::SetSize(MPLPIndexType rows, MPLPIndexType cols)
 {
     this->~Matrix();
 
@@ -271,16 +271,16 @@ void mplpLib::Matrix::SetSize(int rows, int cols)
     m_ep = &m_raw_dat[rows*cols];
     m_rows = new double*[rows];
 
-    for (int i=0; i<rows; i++)
+    for (MPLPIndexType i=0; i<rows; i++)
         m_rows[i]=&m_raw_dat[i*cols];
 }
 
-void mplpLib::Matrix::SetRow(int i, Vec & v)
+void mplpLib::Matrix::SetRow(MPLPIndexType i, Vec & v)
 {
     memcpy(m_rows[i],v.m_dat,m_ncols*sizeof(double));
 }
 
-void mplpLib::Matrix::GetRow(int i, Vec &v)
+void mplpLib::Matrix::GetRow(MPLPIndexType i, Vec &v)
 {
     memcpy(v.m_dat,m_rows[i],m_ncols*sizeof(double));
 }
@@ -298,21 +298,21 @@ double Matrix::KL_Dist(Matrix & m)
 
 void mplpLib::Matrix::Rand()
 {
-    for (int i=0; i< m_nrows; i++)
-        for (int j=0; j< m_ncols; j++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
+        for (MPLPIndexType j=0; j< m_ncols; j++)
             (*this)(i,j)=(double) 2.0* (double) rand()/RAND_MAX -1;
 }
 
 void mplpLib::Matrix::Read(char *fname)
 {
     ifstream ifs(fname);
-    int rows,cols;
+    MPLPIndexType rows,cols;
 
     ifs >> rows;
     ifs >> cols;
     SetSize(rows,cols);
-    for (int i=0; i< m_nrows; i++)
-        for (int j=0; j< m_ncols; j++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
+        for (MPLPIndexType j=0; j< m_ncols; j++)
             ifs >> (*this)(i,j);
 }
 
@@ -323,9 +323,9 @@ void mplpLib::Matrix::Write(char *fname)
 
     ofs << m_nrows << " ";
     ofs << m_ncols << " " << endl;
-    for (int i=0; i< m_nrows; i++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
     {
-        for (int j=0; j< m_ncols; j++)
+        for (MPLPIndexType j=0; j< m_ncols; j++)
             ofs << (*this)(i,j) << " ";
         ofs << endl;
     }
@@ -368,8 +368,8 @@ mplpLib::Matrix & mplpLib::Matrix::operator+=(double val)
 
 mplpLib::Matrix & mplpLib::Matrix::BackDiv(Matrix &m)
 {
-    for (int i=0; i< m_nrows; i++)
-        for (int j=0; j< m_ncols; j++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
+        for (MPLPIndexType j=0; j< m_ncols; j++)
             (*this)(i,j)=m(i,j)/(*this)(i,j);
     return (*this);
 }
@@ -379,7 +379,7 @@ void mplpLib::Matrix::VecMult(Vec &m, Vec & v)
     double *pv=v.m_dat;
     double **pm=m_rows;
 
-    for (int i=0; i<m_nrows; i++,pv++,pm++)
+    for (MPLPIndexType i=0; i<m_nrows; i++,pv++,pm++)
         (*pv)=dot(m.m_dat,(*pm),m_ncols);
 }
 
@@ -434,7 +434,7 @@ double mplpLib::Matrix::Sum()
     return s;
 }
 
-double mplpLib::Matrix::SumRow(int i)
+double mplpLib::Matrix::SumRow(MPLPIndexType i)
 {
     double s=0;
     double *ep = &(m_rows[i][m_ncols]);
@@ -445,21 +445,21 @@ double mplpLib::Matrix::SumRow(int i)
     return s;
 }
 
-double mplpLib::Matrix::SumCol(int i)
+double mplpLib::Matrix::SumCol(MPLPIndexType i)
 {
     double sum=0;
-    for (int j=0; j<m_nrows; j++)
+    for (MPLPIndexType j=0; j<m_nrows; j++)
         sum+=(*this)(j,i);
     return sum;
 }
 
-void mplpLib::Matrix::GetCol(int i, Vec &v)
+void mplpLib::Matrix::GetCol(MPLPIndexType i, Vec &v)
 {
-    for (int j=0; j<m_nrows; j++)
+    for (MPLPIndexType j=0; j<m_nrows; j++)
         v[j]=(*this)(j,i);
 }
 
-void mplpLib::Matrix::ScaleRow(int i,double s)
+void mplpLib::Matrix::ScaleRow(MPLPIndexType i,double s)
 {
     double *ep = &(m_rows[i][m_ncols]);
 
@@ -469,35 +469,35 @@ void mplpLib::Matrix::ScaleRow(int i,double s)
 
 mplpLib::Matrix & mplpLib::Matrix::ScaleRowsByVec(Vec &v)
 {
-    for (int i=0; i< m_nrows; i++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
         ScaleRow(i,v[i]);
     return (*this);
 }
 
 mplpLib::Matrix & mplpLib::Matrix::DivRowsByVec(Vec &v)
 {
-    for (int i=0; i< m_nrows; i++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
         ScaleRow(i,1/v[i]);
     return (*this);
 }
 
 void mplpLib::Matrix::SumRows(Vec &v)
 {
-    for (int i=0; i<m_nrows; i++)
+    for (MPLPIndexType i=0; i<m_nrows; i++)
         v[i]=SumRow(i);
 }
 
 void mplpLib::Matrix::SumCols(Vec & v)
 {
-    for (int i=0; i<m_ncols; i++)
+    for (MPLPIndexType i=0; i<m_ncols; i++)
         v[i]=SumCol(i);
 }
 
 void mplpLib::Matrix::Print()
 {
-    for (int i=0; i< m_nrows; i++)
+    for (MPLPIndexType i=0; i< m_nrows; i++)
     {
-        for (int j=0; j< m_ncols; j++)
+        for (MPLPIndexType j=0; j< m_ncols; j++)
             cout << (*this)(i,j) << " ";
         cout << endl;
     }
@@ -505,8 +505,8 @@ void mplpLib::Matrix::Print()
 
 void mplpLib::Matrix::Transpose( Matrix & dst)
 {
-    for (int i=0; i<m_nrows; i++)
-        for (int j=0; j<m_ncols; j++)
+    for (MPLPIndexType i=0; i<m_nrows; i++)
+        for (MPLPIndexType j=0; j<m_ncols; j++)
             dst(j,i)=(*this)(i,j);
 }
 
@@ -515,7 +515,7 @@ double SparseMatrix::KL_Dist(Matrix &p)
 {
 	double sum=0;
 
-	for (int i=0; i<m_nelem; i++)
+	for (MPLPIndexType i=0; i<m_nelem; i++)
 	{
 		double v1=m_dat[i];
 		double v2=p(m_rind[i],m_cind[i]);
@@ -528,7 +528,7 @@ double SparseMatrix::KL_Dist(Matrix &p)
 void mplpLib::SparseMatrix::Read(char *fname, double thr)
 {
     ifstream ifs(fname);
-    int rows,cols,nelem;
+    MPLPIndexType rows,cols,nelem;
 
     ifs >> rows;
     ifs >> cols;
@@ -537,17 +537,17 @@ void mplpLib::SparseMatrix::Read(char *fname, double thr)
     ifs >> nelem;
     m_nelem=nelem;
     m_dat = new double[nelem];
-    m_rind = new int[nelem];
-    m_cind = new int[nelem];
+    m_rind = new MPLPIndexType[nelem];
+    m_cind = new MPLPIndexType[nelem];
     m_thr=thr;
 
     cout << thr << endl;
     double Z=0;
-    int i;
+    MPLPIndexType i;
 
     for (i=0; i< nelem; i++)
     {
-        int row,col;
+        MPLPIndexType row,col;
         double val;
         ifs >> row;
         ifs >> col;
@@ -563,11 +563,11 @@ void mplpLib::SparseMatrix::Read(char *fname, double thr)
     m_thr/=Z;
 }
 
-double mplpLib::SparseMatrix::SumCol(int i)
+double mplpLib::SparseMatrix::SumCol(MPLPIndexType i)
 {
     double sum=0;
-    int count=0;
-    for (int el=0; el<m_nelem; el++)
+    MPLPIndexType count=0;
+    for (MPLPIndexType el=0; el<m_nelem; el++)
         if (m_cind[el]==i)
         {
             sum+=m_dat[el];
@@ -577,11 +577,11 @@ double mplpLib::SparseMatrix::SumCol(int i)
     return sum;
 }
 
-double mplpLib::SparseMatrix::SumRow(int i)
+double mplpLib::SparseMatrix::SumRow(MPLPIndexType i)
 {
     double sum=0;
-    int count=0;
-    for (int el=0; el<m_nelem; el++)
+    MPLPIndexType count=0;
+    for (MPLPIndexType el=0; el<m_nelem; el++)
         if (m_rind[el]==i)
         {
             sum+=m_dat[el];
