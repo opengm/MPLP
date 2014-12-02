@@ -50,7 +50,7 @@ int main( int argc, char *argv[] ){
         return -1;
     }
 
-    double time_elapsed, time, time_limit;
+    double time_elapsed, /*time,*/ time_limit;
     bool LOG_MODE=false; // default
 
     clock_t start = clock();

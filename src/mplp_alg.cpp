@@ -21,7 +21,7 @@
 
 using namespace std;
 
-#define MPLP_DEBUG_MODE 1
+#define MPLP_DEBUG_MODE 0
 
 // Gap used within decoding algorithm. TODO: Better algorithm for choosing this (perhaps iteratively).
 #define MPLP_GAP_THR .001
@@ -199,7 +199,7 @@ void mplpLib::Region::UpdateMsgs(vector<MulDimArr> & sum_into_intersects)
 // Code to read in factor graph and initialize MPLP.
 ////////////////////////////////////////////////////////////////////////////////
 
-mplpLib::MPLPAlg::MPLPAlg(clock_t start, clock_t time_limit, const std::string model_file, const std::string evid_file, FILE *log_file, bool uaiCompetition) : start(start), time_limit(time_limit), begin(false), m_best_val(-MPLP_huge), last_obj(MPLP_huge), total_mplp_iterations(0), previous_run_of_global_decoding(0), obj_del(MPLP_huge), _log_file(log_file), m_uaiCompetition(uaiCompetition) {
+mplpLib::MPLPAlg::MPLPAlg(clock_t start, clock_t time_limit, const std::string model_file, const std::string evid_file, FILE *log_file, bool uaiCompetition) : begin(false), m_best_val(-MPLP_huge), last_obj(MPLP_huge), obj_del(MPLP_huge), total_mplp_iterations(0), previous_run_of_global_decoding(0), m_uaiCompetition(uaiCompetition), _log_file(log_file), start(start), time_limit(time_limit) {
 
     size_t n;
     _res_fname = model_file.substr( (n = model_file.find_last_of('/')) == std::string::npos ? 0 : n + 1 ).append(".MPE");

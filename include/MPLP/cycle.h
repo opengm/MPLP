@@ -21,7 +21,7 @@
 
 namespace mplpLib {
 
-#define MPLP_DEBUG_MODE 1
+#define MPLP_DEBUG_MODE 0
 
 #define MPLP_Inf 9999999999.9
 #define MPLP_CYCLE_THRESH .00001  // TODO: Figure out how to set this
@@ -453,15 +453,15 @@ double find_smn(const std::vector<MPLPIndexType>& partition_i, MPLPIndexType var
 double find_smn_state_i(MPLPIndexType single_i, MPLPIndexType var_i_size, const std::vector<MPLPIndexType>& partition_j, MPLPIndexType var_j_size, MulDimArr* edge_belief, std::vector<std::vector<double> >& max_i_bij_not_xi) {
     double max, sec_max;
     max = sec_max = -MPLP_Inf;
-    double whole_i[var_i_size];
+    //double whole_i[var_i_size];
     double whole_j[var_j_size];
-    for (MPLPIndexType i = 0; i < var_i_size; i++) {
+    /*for (MPLPIndexType i = 0; i < var_i_size; i++) {
         whole_i[i] = 0;
-    }
+    }*/
     for (MPLPIndexType j = 0; j < var_j_size; j++) {
         whole_j[j] = 0;
     }
-    whole_i[single_i] = 1;
+    //whole_i[single_i] = 1;
     for (MPLPIndexType j = 0; j < partition_j.size(); j++) {
         //brute force max_{pi(x_i)=pi(x_j)=1}bij(x_i,x_j)
         whole_j[partition_j[j]] = 1;
@@ -492,14 +492,14 @@ double find_smn_state_j(const std::vector<MPLPIndexType>& partition_i, MPLPIndex
     double max, sec_max;
     max = sec_max = -MPLP_Inf;
     double whole_i[var_i_size];
-    double whole_j[var_j_size];
+    //double whole_j[var_j_size];
     for (MPLPIndexType i = 0; i < var_i_size; i++) {
         whole_i[i] = 0;
     }
-    for (MPLPIndexType j = 0; j < var_j_size; j++) {
+    /*for (MPLPIndexType j = 0; j < var_j_size; j++) {
         whole_j[j] = 0;
     }
-    whole_j[single_j] = 1;
+    whole_j[single_j] = 1;*/
     for (MPLPIndexType i = 0; i < partition_i.size(); i++) {
         //brute force max_{pi(x_i)=pi(x_j)=1}bij(x_i,x_j)
         whole_i[partition_i[i]] = 1;
@@ -614,7 +614,7 @@ void find_partition(std::vector<std::map<std::vector<MPLPIndexType>, MPLPIndexTy
     //find the smallest partition and use it as an index
     // If there's a tie, use the partition with the smallest index. Keep it sorted.
     MPLPIndexType min = mplp.m_var_sizes[index_i] + 1;
-    Node* head;
+    Node* head = NULL;
     for (MPLPIndexType i = 0; i < mplp.m_var_sizes[index_i]; i++) {
         Node* t = find(x_i[i]);
         if ((size_i == 2 || t->bit == 3) && min > t->i_size) {
@@ -1597,7 +1597,7 @@ MPLPIndexType add_cycle(MPLPAlg& mplp, std::list<MPLPIndexType> &cycle, std::vec
 MPLPIndexType TightenCycle(MPLPAlg & mplp, MPLPIndexType nclus_to_add,  std::map<std::vector<MPLPIndexType>, bool >& triplet_set, double & promised_bound, MPLPIndexType method) {
 
     MPLPIndexType nClustersAdded = 0;
-    MPLPIndexType nNewClusters;
+    //MPLPIndexType nNewClusters;
 
     if (MPLP_DEBUG_MODE) std::cout << "Finding the most violated cycle...." << std::endl;
 
