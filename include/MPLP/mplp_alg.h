@@ -43,7 +43,7 @@ public:
     std::vector<MulDimArr> m_msgs_from_region;
     std::vector<MPLPIndexType> m_var_sizes;
 
-    Region(std::vector<MPLPIndexType> & region_inds, std::vector<std::vector<MPLPIndexType> > & all_intersects, std::vector<MPLPIndexType> & intersect_inds, std::vector<MPLPIndexType> & var_sizes, MPLPIndexType region_intersect);
+    Region(const std::vector<MPLPIndexType> & region_inds, const std::vector<std::vector<MPLPIndexType> > & all_intersects, const std::vector<MPLPIndexType> & intersect_inds, const std::vector<MPLPIndexType> & var_sizes, MPLPIndexType region_intersect);
 
     // Adds intersection set to the region
     void AddIntersectionSet(MPLPIndexType intersect_loc, std::vector<std::vector<MPLPIndexType> > & all_intersects, std::vector<MPLPIndexType> & var_sizes);
@@ -97,13 +97,16 @@ public:
     //create an MPLP instance from the model file and evidence file (if any)
     MPLPAlg(clock_t, clock_t, const std::string, const std::string, FILE *, bool uaiCompetition);
 
+    // create an MPLP instance from the model given by var_sizes, all_factors and all_lambdas
+    MPLPAlg(clock_t start, clock_t time_limit, const std::vector<MPLPIndexType>& var_sizes, const std::vector< std::vector<MPLPIndexType> >& all_factors, const std::vector< std::vector<double> >& all_lambdas, FILE *log_file, bool uaiCompetition);
+
     MPLPAlg(void){};     //for decoding purpose only
 
     void Init(const std::string, const std::string = "");
 
     void Init2(const std::string, const std::string = "");
 
-    void Init(std::vector<MPLPIndexType> & var_sizes, std::vector<std::vector<MPLPIndexType> > & all_region_inds, std::vector<std::vector<double> > & all_lambdas);
+    void Init(const std::vector<MPLPIndexType> & var_sizes, const std::vector<std::vector<MPLPIndexType> > & all_region_inds, const std::vector<std::vector<double> > & all_lambdas);
 
     void RunMPLP(MPLPIndexType, double, double);
 

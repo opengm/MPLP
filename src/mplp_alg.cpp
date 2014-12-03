@@ -30,7 +30,7 @@ using namespace std;
 // Code to implement the Region object.
 /////////////////////////////////////////////////////////////////////////////////////
 
-mplpLib::Region::Region(vector<MPLPIndexType> & region_inds, vector<vector<MPLPIndexType> > & all_intersects, vector<MPLPIndexType> & intersect_inds, vector<MPLPIndexType> & var_sizes, MPLPIndexType region_intersect): m_region_inds(region_inds), m_intersect_inds(intersect_inds), m_region_intersect(region_intersect)
+mplpLib::Region::Region(const vector<MPLPIndexType> & region_inds, const vector<vector<MPLPIndexType> > & all_intersects, const vector<MPLPIndexType> & intersect_inds, const vector<MPLPIndexType> & var_sizes, MPLPIndexType region_intersect): m_region_inds(region_inds), m_intersect_inds(intersect_inds), m_region_intersect(region_intersect)
 {
     // Find the indices of each intersection within the region. Also intialize the message into that intersection
     for (MPLPIndexType si=0; si<m_intersect_inds.size(); ++si){
@@ -222,6 +222,13 @@ mplpLib::MPLPAlg::MPLPAlg(clock_t start, clock_t time_limit, const std::string m
     }
 }
 
+mplpLib::MPLPAlg::MPLPAlg(clock_t start, clock_t time_limit, const std::vector<MPLPIndexType>& var_sizes, const std::vector< std::vector<MPLPIndexType> >& all_factors, const std::vector< std::vector<double> >& all_lambdas, FILE *log_file, bool uaiCompetition) : begin(false), m_best_val(-MPLP_huge), last_obj(MPLP_huge), obj_del(MPLP_huge), total_mplp_iterations(0), previous_run_of_global_decoding(0), m_uaiCompetition(uaiCompetition), _res_fname("MPLP_Results.log"), _ofs_res(_res_fname.c_str(), std::ios::out | std::ios::trunc), _log_file(log_file), start(start), time_limit(time_limit) {
+    if(MPLP_DEBUG_MODE) std::cout<<"Initializing..."<<std::endl;
+
+    Init(var_sizes, all_factors, all_lambdas);
+
+}
+
 void mplpLib::MPLPAlg::Init(const std::string fn, const std::string evid_fn){
     if(MPLP_DEBUG_MODE)
         cout << "Calling Init() code...\n";
@@ -252,7 +259,7 @@ void mplpLib::MPLPAlg::Init2(const std::string fn, const std::string evid_fn){
 }
 
 
-void mplpLib::MPLPAlg::Init(vector<MPLPIndexType> & var_sizes, vector<vector<MPLPIndexType> > & all_region_inds, vector<vector<double> > & all_lambdas) {
+void mplpLib::MPLPAlg::Init(const vector<MPLPIndexType> & var_sizes, const vector<vector<MPLPIndexType> > & all_region_inds, const vector<vector<double> > & all_lambdas) {
     // Set m_var_sizes
     m_var_sizes = var_sizes;   //invoking copy constructor
 
